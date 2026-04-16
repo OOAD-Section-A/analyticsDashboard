@@ -2,7 +2,7 @@ package repository;
 
 import com.jackfruit.scm.database.adapter.LogisticsAdapter;
 import com.jackfruit.scm.database.facade.SupplyChainDatabaseFacade;
-import com.jackfruit.scm.reporting.model.ShipmentData;
+import model.ShipmentData;
 
 import java.util.List;
 import java.util.stream.Collectors;

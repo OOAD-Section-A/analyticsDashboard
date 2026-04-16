@@ -2,7 +2,7 @@ package repository;
 
 import com.jackfruit.scm.database.adapter.OrderAdapter;
 import com.jackfruit.scm.database.facade.SupplyChainDatabaseFacade;
-import com.jackfruit.scm.reporting.model.OrderData;
+import model.OrderData;
 
 import java.util.List;
 import java.util.stream.Collectors;

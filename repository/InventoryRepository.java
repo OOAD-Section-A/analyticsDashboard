@@ -2,7 +2,7 @@ package repository;
 
 import com.jackfruit.scm.database.adapter.InventoryAdapter;
 import com.jackfruit.scm.database.facade.SupplyChainDatabaseFacade;
-import com.jackfruit.scm.reporting.model.InventoryData;
+import model.InventoryData;
 
 import java.util.List;
 import java.util.stream.Collectors;

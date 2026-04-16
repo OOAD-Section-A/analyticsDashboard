@@ -2,7 +2,7 @@ package repository;
 
 import com.jackfruit.scm.database.adapter.WarehouseManagementAdapter;
 import com.jackfruit.scm.database.facade.SupplyChainDatabaseFacade;
-import com.jackfruit.scm.reporting.model.WarehouseData;
+import model.WarehouseData;
 
 import java.util.List;
 import java.util.stream.Collectors;
