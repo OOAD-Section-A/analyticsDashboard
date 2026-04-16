@@ -1,7 +1,7 @@
-package com.jackfruit.scm.reporting.engine;
+package engine;
 
-import com.jackfruit.scm.reporting.dto.KPIResult;
-import com.jackfruit.scm.reporting.model.*;
+import dto.KPIResult;
+import model.*;
 
 import java.util.List;
 

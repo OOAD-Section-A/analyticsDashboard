@@ -1,6 +1,6 @@
-package com.jackfruit.scm.reporting.engine;
+package engine;
 
-import com.jackfruit.scm.reporting.dto.KPIResult;
+import dto.KPIResult;
 
 import java.util.ArrayList;
 import java.util.List;

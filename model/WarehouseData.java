@@ -1,4 +1,4 @@
-package com.jackfruit.scm.reporting.model;
+package model;
 
 public class WarehouseData {
     private String warehouseId;

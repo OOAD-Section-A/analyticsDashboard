@@ -1,7 +1,7 @@
-package com.jackfruit.scm.reporting.service;
+package service;
 
-import com.jackfruit.scm.reporting.model.ForecastData;
-import com.jackfruit.scm.reporting.repository.ForecastRepository;
+import model.ForecastData;
+import repository.ForecastRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;

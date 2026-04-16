@@ -1,7 +1,7 @@
-package com.jackfruit.scm.reporting.engine;
+package engine;
 
-import com.jackfruit.scm.reporting.dto.KPIResult;
-import com.jackfruit.scm.reporting.dto.ReportDTO;
+import dto.KPIResult;
+import dto.ReportDTO;
 
 import java.time.LocalDateTime;
 import java.util.List;

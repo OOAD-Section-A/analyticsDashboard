@@ -1,4 +1,4 @@
-package com.jackfruit.scm.reporting.dto;
+package dto;
 
 public class KPIResult {
     private final double totalRevenue;

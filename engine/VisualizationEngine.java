@@ -1,8 +1,8 @@
-package com.jackfruit.scm.reporting.engine;
+package engine;
 
-import com.jackfruit.scm.reporting.dto.VisualizationDTO;
-import com.jackfruit.scm.reporting.model.InventoryData;
-import com.jackfruit.scm.reporting.model.SalesData;
+import dto.VisualizationDTO;
+import model.InventoryData;
+import model.SalesData;
 
 import java.util.*;
 import java.util.stream.Collectors;

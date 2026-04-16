@@ -1,7 +1,7 @@
-package com.jackfruit.scm.reporting.engine;
+package engine;
 
-import com.jackfruit.scm.reporting.model.InventoryData;
-import com.jackfruit.scm.reporting.model.ShipmentData;
+import model.InventoryData;
+import model.ShipmentData;
 
 import java.util.ArrayList;
 import java.util.List;

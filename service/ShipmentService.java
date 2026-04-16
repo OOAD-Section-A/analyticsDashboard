@@ -1,7 +1,7 @@
-package com.jackfruit.scm.reporting.service;
+package service;
 
-import com.jackfruit.scm.reporting.model.ShipmentData;
-import com.jackfruit.scm.reporting.repository.ShipmentRepository;
+import model.ShipmentData;
+import repository.ShipmentRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;

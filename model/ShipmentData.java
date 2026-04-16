@@ -1,4 +1,4 @@
-package com.jackfruit.scm.reporting.model;
+package model;
 
 import java.time.LocalDate;
 

@@ -1,4 +1,4 @@
-package com.jackfruit.scm.reporting.dto;
+package dto;
 
 import java.time.LocalDateTime;
 import java.util.List;

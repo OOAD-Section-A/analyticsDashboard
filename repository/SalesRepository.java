@@ -1,4 +1,4 @@
-package com.jackfruit.scm.reporting.repository;
+package repository;
 
 import com.jackfruit.scm.database.adapter.ReportingAdapter;
 import com.jackfruit.scm.database.facade.SupplyChainDatabaseFacade;

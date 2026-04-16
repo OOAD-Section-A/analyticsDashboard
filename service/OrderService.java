@@ -1,7 +1,7 @@
-package com.jackfruit.scm.reporting.service;
+package service;
 
-import com.jackfruit.scm.reporting.model.OrderData;
-import com.jackfruit.scm.reporting.repository.OrderRepository;
+import model.OrderData;
+import repository.OrderRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
