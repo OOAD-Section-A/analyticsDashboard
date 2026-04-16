@@ -1,0 +1,197 @@
+Design and implement a Java-based Report and Analytics subsystem using a layered architecture. The system must follow a clear flow of control from database access to final dashboard output.
+
+### 1. Database Integration (FIRST PRIORITY)
+
+Use the provided database integration JAR.
+
+* Entry point: `SupplyChainDatabaseFacade`
+* Use adapter classes from `com.jackfruit.scm.database.adapter` for accessing data
+* The system must fetch the following datasets:
+
+  * Inventory Data
+  * Forecasting Data
+  * Warehouse Data
+  * Supplier Data
+  * Shipment Data
+  * Order Data
+  * Sales Data
+
+Database access must be done only through:
+
+* Adapter classes (preferred), or
+* Direct facade usage if needed
+
+Do NOT write custom DB connection logic. Reuse the shared module. 
+
+---
+
+### 2. Repository Layer
+
+Create repository classes responsible only for fetching data from the database.
+
+* One repository per data type:
+
+  * InventoryRepository
+  * ForecastRepository
+  * WarehouseRepository
+  * SupplierRepository
+  * ShipmentRepository
+  * OrderRepository
+  * SalesRepository
+
+Responsibilities:
+
+* Call adapter methods
+* Convert results into model objects
+* Return raw structured data
+* Do not give complete code for this just give a boilerplate with minimal working functionalities
+
+No business logic or processing allowed.
+
+---
+
+### 3. Model Layer
+
+Define simple data classes representing raw data from the database.
+
+Examples:
+
+* InventoryData
+* SalesData
+* OrderData
+* ShipmentData
+* etc.
+
+These are plain data holders used across layers.
+
+---
+
+### 4. Service Layer (Domain Processing)
+
+Create service classes per domain:
+
+* InventoryService
+* SalesService
+* OrderService
+* SupplierService
+* WarehouseService
+* ShipmentService
+* ForecastService
+
+Responsibilities:
+
+* Call respective repositories
+* Perform data cleaning and preprocessing:
+
+  * remove invalid/null records
+  * basic filtering
+  * normalization if needed
+* Do not give complete code for this just give a boilerplate with minimal working functionalities
+* Return cleaned model data
+
+No analytics, no KPI calculations here.
+
+---
+
+### 5. Engine Layer (Core Functionalities)
+
+Implement the main system intelligence using separate engine classes:
+
+* AnalyticsEngine
+  → Compute KPIs and metrics using multiple datasets
+
+* InsightAggregator
+  → Generate human-readable insights from analytics output
+
+* AlertGenerator
+  → Detect issues like low inventory, shipment delays, anomalies
+
+* VisualizationEngine
+  → Convert processed data into chart/graph-friendly structures
+
+* ReportGenerator
+  → Generate structured reports from KPIs and insights
+
+Each engine:
+
+* Takes cleaned data from service layer
+* Produces processed results (not UI-ready yet)
+
+Engines must NOT access repositories directly.
+
+---
+
+### 6. DTO Layer (Output Structures)
+
+Define DTO classes for final output:
+
+* KPIResult
+* VisualizationDTO
+* ReportDTO
+* DashboardDTO
+
+DashboardDTO should contain:
+
+* KPIs
+* Insights
+* Alerts
+* Visual data
+* Reports
+
+DTOs must contain no logic.
+
+---
+
+### 7. Dashboard Layer (Orchestrator)
+
+Create a central class:
+
+`DashboardService`
+
+Responsibilities:
+
+1. Call all service classes to fetch cleaned data
+2. Pass data to engines
+3. Collect outputs from all engines
+4. Construct final DashboardDTO
+
+This acts as the single entry point for the UI team.
+
+---
+
+### 8. Flow of Control
+
+The system must strictly follow this sequence:
+
+Repository → Model → Service → Engine → DTO → Dashboard → UI
+
+Detailed flow:
+
+1. Repository fetches raw data using DB adapters
+2. Service layer cleans and prepares data
+3. Engine layer performs analytics, insights, alerts, and reporting
+4. DTO layer packages final output
+5. DashboardService aggregates everything and returns final result
+
+---
+
+### 9. Constraints
+
+* No direct DB calls outside repository layer
+* No business logic inside repository or DTO
+* No engine should bypass service layer
+* Keep classes modular and per responsibility
+* Avoid unnecessary micro-classes
+
+---
+
+### Goal of First Draft
+
+The first implementation should:
+
+* Successfully connect to DB via the provided JAR
+* Fetch all required datasets
+* Pass data through repository → service → engine pipeline
+* Produce a basic DashboardDTO boilerplate
+
+UI integration is not required at this stage.

@@ -1,9 +1,9 @@
 package model;
 
-public class Inventory {
+public class InventoryData {
     public String productId;
     public int quantity;
-    public Inventory(String productId, int quantity) {
+    public InventoryData(String productId, int quantity) {
         this.productId = productId;
         this.quantity = quantity;
     }

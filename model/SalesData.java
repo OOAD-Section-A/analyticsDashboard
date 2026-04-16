@@ -1,9 +1,9 @@
 package model;
 
-public class Sales {
+public class SalesData {
     public String productId;
     public int unitsSold;
-    public Sales(String productId, int unitsSold) {
+    public SalesData(String productId, int unitsSold) {
         this.productId = productId;
         this.unitsSold = unitsSold;
     }
