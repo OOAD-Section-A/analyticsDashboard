@@ -1,17 +1,20 @@
-package model;
+package com.jackfruit.scm.reporting.model;
 
 public class SupplierData {
-    public String supplierId;
-    public String name;
-    public String contactInfo;
+    private String supplierId;
+    private String supplierName;
+    private String region;
+    private double reliabilityScore;
 
-    public SupplierData(String supplierId, String name) {
-        this(supplierId, name, null);
-    }
-
-    public SupplierData(String supplierId, String name, String contactInfo) {
+    public SupplierData(String supplierId, String supplierName, String region, double reliabilityScore) {
         this.supplierId = supplierId;
-        this.name = name;
-        this.contactInfo = contactInfo;
+        this.supplierName = supplierName;
+        this.region = region;
+        this.reliabilityScore = reliabilityScore;
     }
+
+    public String getSupplierId() { return supplierId; }
+    public String getSupplierName() { return supplierName; }
+    public String getRegion() { return region; }
+    public double getReliabilityScore() { return reliabilityScore; }
 }
