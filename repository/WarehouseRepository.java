@@ -46,7 +46,7 @@ public class WarehouseRepository {
 
             return new ArrayList<>(warehouses.values());
         } catch (Exception ex) {
-            exceptionSource.fireConnectionFailed(CONNECTION_FAILURE_ID, "WarehouseRepository.fetchAll", ex.getMessage());
+            exceptionSource.fireDataSourceUnavailable("WarehouseRepository.fetchAll", ex.getMessage());
             throw new IllegalStateException("Failed to fetch warehouse data", ex);
         }
     }

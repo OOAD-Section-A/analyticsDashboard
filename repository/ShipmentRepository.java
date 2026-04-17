@@ -45,7 +45,7 @@ public class ShipmentRepository {
 
             return new ArrayList<>(shipments.values());
         } catch (Exception ex) {
-            exceptionSource.fireConnectionFailed(CONNECTION_FAILURE_ID, "ShipmentRepository.fetchAll", ex.getMessage());
+            exceptionSource.fireDataSourceUnavailable("ShipmentRepository.fetchAll", ex.getMessage());
             throw new IllegalStateException("Failed to fetch shipment data", ex);
         }
     }

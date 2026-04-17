@@ -24,7 +24,7 @@ public class SalesRepository {
                     .map(this::mapSale)
                     .collect(Collectors.toList());
         } catch (Exception ex) {
-            exceptionSource.fireConnectionFailed(CONNECTION_FAILURE_ID, "SalesRepository.fetchAll", ex.getMessage());
+            exceptionSource.fireDataSourceUnavailable("SalesRepository.fetchAll", ex.getMessage());
             throw new IllegalStateException("Failed to fetch sales data", ex);
         }
     }

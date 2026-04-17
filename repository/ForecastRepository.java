@@ -24,7 +24,7 @@ public class ForecastRepository {
                     .map(this::mapForecast)
                     .collect(Collectors.toList());
         } catch (Exception ex) {
-            exceptionSource.fireConnectionFailed(CONNECTION_FAILURE_ID, "ForecastRepository.fetchAll", ex.getMessage());
+            exceptionSource.fireDataSourceUnavailable("ForecastRepository.fetchAll", ex.getMessage());
             throw new IllegalStateException("Failed to fetch forecast data", ex);
         }
     }

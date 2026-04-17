@@ -24,7 +24,7 @@ public class OrderRepository {
                     .map(this::mapOrder)
                     .collect(Collectors.toList());
         } catch (Exception ex) {
-            exceptionSource.fireConnectionFailed(CONNECTION_FAILURE_ID, "OrderRepository.fetchAll", ex.getMessage());
+            exceptionSource.fireDataSourceUnavailable("OrderRepository.fetchAll", ex.getMessage());
             throw new IllegalStateException("Failed to fetch order data", ex);
         }
     }

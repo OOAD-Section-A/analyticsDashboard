@@ -47,7 +47,7 @@ public class InventoryRepository {
                     ))
                     .collect(Collectors.toList());
         } catch (Exception ex) {
-            exceptionSource.fireConnectionFailed(CONNECTION_FAILURE_ID, "InventoryRepository.fetchAll", ex.getMessage());
+            exceptionSource.fireDataSourceUnavailable("InventoryRepository.fetchAll", ex.getMessage());
             throw new IllegalStateException("Failed to fetch inventory data", ex);
         }
     }

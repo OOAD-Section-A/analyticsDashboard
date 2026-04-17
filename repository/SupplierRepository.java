@@ -43,7 +43,7 @@ public class SupplierRepository {
 
             return new ArrayList<>(suppliers.values());
         } catch (Exception ex) {
-            exceptionSource.fireConnectionFailed(CONNECTION_FAILURE_ID, "SupplierRepository.fetchAll", ex.getMessage());
+            exceptionSource.fireDataSourceUnavailable("SupplierRepository.fetchAll", ex.getMessage());
             throw new IllegalStateException("Failed to fetch supplier data", ex);
         }
     }
