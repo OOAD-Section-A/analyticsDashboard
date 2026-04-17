@@ -10,10 +10,12 @@ public class ReportGenerator {
 
     public ReportDTO generate(KPIResult kpis, List<String> insights, List<String> alerts) {
         String summary = String.format(
-                "Total Revenue: %.2f | Total Orders: %d | Pending Orders: %d | " +
-                "Delayed Shipments: %d | Avg Warehouse Utilization: %.1f%% | Avg Supplier Reliability: %.1f%%",
-                kpis.getTotalRevenue(), kpis.getTotalOrders(), kpis.getPendingOrders(),
-                kpis.getDelayedShipments(), kpis.getAvgWarehouseUtilization(), kpis.getAvgSupplierReliability()
+                "Total Revenue: %.2f | Total Orders: %d | Pending Orders: %d | Completed Orders: %d | " +
+                "Revenue per Order: %.2f | Inventory Turnover: %.2f | Forecast Accuracy: %.1f%% | " +
+                "On-Time Shipment Rate: %.1f%% | Avg Warehouse Utilization: %.1f%% | Avg Supplier Reliability: %.1f%%",
+                kpis.getTotalRevenue(), kpis.getTotalOrders(), kpis.getPendingOrders(), kpis.getCompletedOrders(),
+                kpis.getRevenuePerOrder(), kpis.getInventoryTurnoverRatio(), kpis.getForecastAccuracyRate(),
+                kpis.getOnTimeShipmentRate(), kpis.getAvgWarehouseUtilization(), kpis.getAvgSupplierReliability()
         );
         return new ReportDTO(summary, insights, alerts, LocalDateTime.now());
     }

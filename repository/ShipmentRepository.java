@@ -1,29 +1,52 @@
 package repository;
 
-import com.jackfruit.scm.database.adapter.LogisticsAdapter;
+import com.jackfruit.scm.database.adapter.ReportingAdapter;
 import com.jackfruit.scm.database.facade.SupplyChainDatabaseFacade;
+import com.jackfruit.scm.database.model.ReportingModels;
+import exception.AnalyticsExceptionSource;
 import model.ShipmentData;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ShipmentRepository {
 
-    private final LogisticsAdapter logisticsAdapter;
+    private static final int CONNECTION_FAILURE_ID = 1005;
 
-    public ShipmentRepository(SupplyChainDatabaseFacade facade) {
-        this.logisticsAdapter = new LogisticsAdapter(facade);
+    private final AnalyticsExceptionSource exceptionSource;
+
+    public ShipmentRepository(AnalyticsExceptionSource exceptionSource) {
+        this.exceptionSource = exceptionSource;
     }
 
     public List<ShipmentData> fetchAll() {
-        return logisticsAdapter.listShipments().stream()
-                .map(s -> new ShipmentData(
-                        s.shipmentId(),
-                        s.orderId(),
-                        s.status(),
-                        s.expectedDate(),
-                        s.actualDate()
-                ))
-                .collect(Collectors.toList());
+        try (SupplyChainDatabaseFacade facade = new SupplyChainDatabaseFacade()) {
+            ReportingAdapter reportingAdapter = new ReportingAdapter(facade);
+            LinkedHashMap<String, ShipmentData> shipments = new LinkedHashMap<>();
+
+            for (ReportingModels.DashboardReportRow row : reportingAdapter.getDashboardReport()) {
+                if (row.shipmentId() == null || row.shipmentId().isBlank()) {
+                    continue;
+                }
+
+                shipments.putIfAbsent(
+                        row.shipmentId(),
+                        new ShipmentData(
+                                row.shipmentId(),
+                                row.orderId(),
+                                row.deliveryStatus(),
+                                row.dispatchDate() == null ? null : row.dispatchDate().toLocalDate(),
+                                row.deliveryDate() == null ? null : row.deliveryDate().toLocalDate(),
+                                Boolean.TRUE.equals(row.delayFlag())
+                        )
+                );
+            }
+
+            return new ArrayList<>(shipments.values());
+        } catch (Exception ex) {
+            exceptionSource.fireConnectionFailed(CONNECTION_FAILURE_ID, "ShipmentRepository.fetchAll", ex.getMessage());
+            throw new IllegalStateException("Failed to fetch shipment data", ex);
+        }
     }
 }

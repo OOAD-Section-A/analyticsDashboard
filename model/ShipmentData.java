@@ -6,20 +6,23 @@ public class ShipmentData {
     private String shipmentId;
     private String orderId;
     private String status;
-    private LocalDate expectedDate;
-    private LocalDate actualDate;
+    private LocalDate dispatchDate;
+    private LocalDate deliveryDate;
+    private boolean delayed;
 
-    public ShipmentData(String shipmentId, String orderId, String status, LocalDate expectedDate, LocalDate actualDate) {
+    public ShipmentData(String shipmentId, String orderId, String status, LocalDate dispatchDate, LocalDate deliveryDate, boolean delayed) {
         this.shipmentId = shipmentId;
         this.orderId = orderId;
         this.status = status;
-        this.expectedDate = expectedDate;
-        this.actualDate = actualDate;
+        this.dispatchDate = dispatchDate;
+        this.deliveryDate = deliveryDate;
+        this.delayed = delayed;
     }
 
     public String getShipmentId() { return shipmentId; }
     public String getOrderId() { return orderId; }
     public String getStatus() { return status; }
-    public LocalDate getExpectedDate() { return expectedDate; }
-    public LocalDate getActualDate() { return actualDate; }
+    public LocalDate getDispatchDate() { return dispatchDate; }
+    public LocalDate getDeliveryDate() { return deliveryDate; }
+    public boolean isDelayed() { return delayed; }
 }

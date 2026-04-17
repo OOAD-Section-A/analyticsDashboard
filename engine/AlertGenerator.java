@@ -19,8 +19,7 @@ public class AlertGenerator {
                         + "] has only " + i.getQuantity() + " units left."));
 
         shipments.stream()
-                .filter(s -> s.getActualDate() != null && s.getExpectedDate() != null
-                        && s.getActualDate().isAfter(s.getExpectedDate()))
+                .filter(ShipmentData::isDelayed)
                 .forEach(s -> alerts.add("SHIPMENT DELAY: Shipment [" + s.getShipmentId()
                         + "] for Order [" + s.getOrderId() + "] is delayed."));
 

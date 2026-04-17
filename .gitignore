@@ -1,0 +1,5 @@
+_build/
+_db_classes/
+db.jar
+database.properties
+.vscode/
