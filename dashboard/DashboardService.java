@@ -1,47 +1,76 @@
 package dashboard;
 
-import com.jackfruit.scm.database.facade.SupplyChainDatabaseFacade;
-import dto.*;
-import engine.*;
-import model.*;
-import repository.*;
-import service.*;
+import dto.DashboardDTO;
+import dto.KPIResult;
+import dto.ReportDTO;
+import dto.VisualizationDTO;
+import engine.AlertGenerator;
+import engine.AnalyticsEngine;
+import engine.InsightAggregator;
+import engine.ReportGenerator;
+import engine.VisualizationEngine;
+import exception.AnalyticsExceptionSource;
+import model.ForecastData;
+import model.InventoryData;
+import model.OrderData;
+import model.SalesData;
+import model.ShipmentData;
+import model.SupplierData;
+import model.WarehouseData;
+import repository.ForecastRepository;
+import repository.InventoryRepository;
+import repository.OrderRepository;
+import repository.SalesRepository;
+import repository.ShipmentRepository;
+import repository.SupplierRepository;
+import repository.WarehouseRepository;
+import service.ForecastService;
+import service.InventoryService;
+import service.OrderService;
+import service.SalesService;
+import service.ShipmentService;
+import service.SupplierService;
+import service.WarehouseService;
 
 import java.util.List;
 
 public class DashboardService {
 
+    private final AnalyticsExceptionSource exceptionSource;
+
+    public DashboardService() {
+        this(new AnalyticsExceptionSource());
+    }
+
+    public DashboardService(AnalyticsExceptionSource exceptionSource) {
+        this.exceptionSource = exceptionSource;
+    }
+
     public DashboardDTO buildDashboard() {
-        try (SupplyChainDatabaseFacade facade = new SupplyChainDatabaseFacade()) {
+        InventoryRepository inventoryRepository = new InventoryRepository(exceptionSource);
+        SalesRepository salesRepository = new SalesRepository(exceptionSource);
+        OrderRepository orderRepository = new OrderRepository(exceptionSource);
+        ShipmentRepository shipmentRepository = new ShipmentRepository(exceptionSource);
+        WarehouseRepository warehouseRepository = new WarehouseRepository(exceptionSource);
+        SupplierRepository supplierRepository = new SupplierRepository(exceptionSource);
+        ForecastRepository forecastRepository = new ForecastRepository(exceptionSource);
 
-            // --- Repositories ---
-            InventoryRepository inventoryRepo = new InventoryRepository(facade);
-            SalesRepository salesRepo = new SalesRepository(facade);
-            OrderRepository orderRepo = new OrderRepository(facade);
-            ShipmentRepository shipmentRepo = new ShipmentRepository(facade);
-            WarehouseRepository warehouseRepo = new WarehouseRepository(facade);
-            SupplierRepository supplierRepo = new SupplierRepository(facade);
-            ForecastRepository forecastRepo = new ForecastRepository(facade);
+        List<InventoryData> inventory = new InventoryService(inventoryRepository, exceptionSource).getCleanedData();
+        List<SalesData> sales = new SalesService(salesRepository, exceptionSource).getCleanedData();
+        List<OrderData> orders = new OrderService(orderRepository, exceptionSource).getCleanedData();
+        List<ShipmentData> shipments = new ShipmentService(shipmentRepository, exceptionSource).getCleanedData();
+        List<WarehouseData> warehouses = new WarehouseService(warehouseRepository, exceptionSource).getCleanedData();
+        List<SupplierData> suppliers = new SupplierService(supplierRepository, exceptionSource).getCleanedData();
+        List<ForecastData> forecasts = new ForecastService(forecastRepository, exceptionSource).getCleanedData();
 
-            // --- Services ---
-            List<InventoryData> inventory = new InventoryService(inventoryRepo).getCleanedData();
-            List<SalesData> sales = new SalesService(salesRepo).getCleanedData();
-            List<OrderData> orders = new OrderService(orderRepo).getCleanedData();
-            List<ShipmentData> shipments = new ShipmentService(shipmentRepo).getCleanedData();
-            List<WarehouseData> warehouses = new WarehouseService(warehouseRepo).getCleanedData();
-            List<SupplierData> suppliers = new SupplierService(supplierRepo).getCleanedData();
-            List<ForecastData> forecasts = new ForecastService(forecastRepo).getCleanedData();
+        KPIResult kpis = new AnalyticsEngine()
+                .compute(inventory, sales, orders, shipments, warehouses, suppliers, forecasts);
 
-            // --- Engines ---
-            KPIResult kpis = new AnalyticsEngine()
-                    .compute(inventory, sales, orders, shipments, warehouses, suppliers, forecasts);
+        List<String> insights = new InsightAggregator().generate(kpis);
+        List<String> alerts = new AlertGenerator().generate(inventory, shipments);
+        VisualizationDTO visualizations = new VisualizationEngine().buildCharts(sales, inventory);
+        ReportDTO report = new ReportGenerator().generate(kpis, insights, alerts);
 
-            List<String> insights = new InsightAggregator().generate(kpis);
-            List<String> alerts = new AlertGenerator().generate(inventory, shipments);
-            VisualizationDTO visuals = new VisualizationEngine().buildCharts(sales, inventory);
-            ReportDTO report = new ReportGenerator().generate(kpis, insights, alerts);
-
-            return new DashboardDTO(kpis, insights, alerts, visuals, report);
-        }
+        return new DashboardDTO(kpis, insights, alerts, visualizations, report);
     }
 }
