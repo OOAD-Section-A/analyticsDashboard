@@ -1,14 +1,14 @@
 package engine;
 
-import dto.KPIResult;
-import dto.ReportDTO;
+import internal.KPIResultInternal;
+import internal.ReportDataInternal;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class ReportGenerator {
 
-    public ReportDTO generate(KPIResult kpis, List<String> insights, List<String> alerts) {
+    public ReportDataInternal generate(KPIResultInternal kpis, List<String> insights, List<String> alerts) {
         String summary = String.format(
                 "Total Revenue: %.2f | Total Orders: %d | Pending Orders: %d | Completed Orders: %d | " +
                 "Revenue per Order: %.2f | Inventory Turnover: %.2f | Forecast Accuracy: %.1f%% | " +
@@ -17,6 +17,6 @@ public class ReportGenerator {
                 kpis.getRevenuePerOrder(), kpis.getInventoryTurnoverRatio(), kpis.getForecastAccuracyRate(),
                 kpis.getOnTimeShipmentRate(), kpis.getAvgWarehouseUtilization(), kpis.getAvgSupplierReliability()
         );
-        return new ReportDTO(summary, insights, alerts, LocalDateTime.now());
+        return new ReportDataInternal(summary, insights, alerts, LocalDateTime.now());
     }
 }

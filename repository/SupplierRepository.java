@@ -5,12 +5,13 @@ import com.jackfruit.scm.database.facade.SupplyChainDatabaseFacade;
 import com.jackfruit.scm.database.model.ReportingModels;
 import exception.AnalyticsExceptionSource;
 import model.SupplierData;
+import repository.interfaces.SupplierRepositoryInterface;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class SupplierRepository {
+public class SupplierRepository implements SupplierRepositoryInterface {
 
     private static final int CONNECTION_FAILURE_ID = 1006;
 

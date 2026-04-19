@@ -1,13 +1,13 @@
 package engine;
 
-import dto.KPIResult;
+import internal.KPIResultInternal;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class InsightAggregator {
 
-    public List<String> generate(KPIResult kpis) {
+    public List<String> generate(KPIResultInternal kpis) {
         List<String> insights = new ArrayList<>();
 
         if (kpis.getAvgWarehouseUtilization() > 85) {
