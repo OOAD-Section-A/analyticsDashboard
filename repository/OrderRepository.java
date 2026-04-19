@@ -4,11 +4,12 @@ import com.jackfruit.scm.database.facade.SupplyChainDatabaseFacade;
 import com.jackfruit.scm.database.model.Order;
 import exception.AnalyticsExceptionSource;
 import model.OrderData;
+import repository.interfaces.OrderRepositoryInterface;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class OrderRepository {
+public class OrderRepository implements OrderRepositoryInterface {
 
     private static final int CONNECTION_FAILURE_ID = 1003;
 

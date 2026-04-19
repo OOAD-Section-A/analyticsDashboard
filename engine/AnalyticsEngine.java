@@ -1,6 +1,7 @@
 package engine;
 
-import dto.KPIResult;
+import internal.KPIResultInternal;
+import internal.input.AnalyticsInput;
 import model.ForecastData;
 import model.InventoryData;
 import model.OrderData;
@@ -13,15 +14,14 @@ import java.util.List;
 
 public class AnalyticsEngine {
 
-    public KPIResult compute(
-            List<InventoryData> inventory,
-            List<SalesData> sales,
-            List<OrderData> orders,
-            List<ShipmentData> shipments,
-            List<WarehouseData> warehouses,
-            List<SupplierData> suppliers,
-            List<ForecastData> forecasts
-    ) {
+    public KPIResultInternal compute(AnalyticsInput input) {
+        List<InventoryData> inventory = input.getInventory();
+        List<SalesData> sales = input.getSales();
+        List<OrderData> orders = input.getOrders();
+        List<ShipmentData> shipments = input.getShipments();
+        List<WarehouseData> warehouses = input.getWarehouses();
+        List<SupplierData> suppliers = input.getSuppliers();
+        List<ForecastData> forecasts = input.getForecasts();
         double totalRevenue = sales.stream().mapToDouble(SalesData::getRevenue).sum();
         int totalOrders = orders.size();
         int pendingOrders = (int) orders.stream()
@@ -60,7 +60,7 @@ public class AnalyticsEngine {
                 .orElse(0.0);
         double inventoryCoverageDays = averageDailyDemand <= 0.0 ? 0.0 : totalInventoryUnits / averageDailyDemand;
 
-        return new KPIResult(
+        return new KPIResultInternal(
                 round(totalRevenue),
                 totalOrders,
                 pendingOrders,

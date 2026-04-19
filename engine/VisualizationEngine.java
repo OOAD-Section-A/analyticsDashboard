@@ -1,6 +1,7 @@
 package engine;
 
-import dto.VisualizationDTO;
+import internal.VisualizationDataInternal;
+import internal.input.VisualizationInput;
 import model.InventoryData;
 import model.SalesData;
 
@@ -9,7 +10,9 @@ import java.util.stream.Collectors;
 
 public class VisualizationEngine {
 
-    public VisualizationDTO buildCharts(List<SalesData> sales, List<InventoryData> inventory) {
+    public VisualizationDataInternal buildCharts(VisualizationInput input) {
+        List<SalesData> sales = input.getSales();
+        List<InventoryData> inventory = input.getInventory();
         // Revenue by product
         Map<String, Double> revenueByProduct = sales.stream()
                 .collect(Collectors.groupingBy(SalesData::getProductId,
@@ -20,6 +23,6 @@ public class VisualizationEngine {
                 .collect(Collectors.toMap(InventoryData::getProductId,
                         InventoryData::getQuantity, Integer::sum));
 
-        return new VisualizationDTO(revenueByProduct, inventoryLevels);
+        return new VisualizationDataInternal(revenueByProduct, inventoryLevels);
     }
 }

@@ -47,7 +47,11 @@ public class KpiCleaningSelfTest {
         assertEquals(2, suppliers.size(), "Supplier cleaning");
         assertEquals(2, forecasts.size(), "Forecast cleaning");
 
-        KPIResult kpis = new AnalyticsEngine().compute(inventory, sales, orders, shipments, warehouses, suppliers, forecasts);
+        // Create AnalyticsInput and use new compute signature
+        internal.input.AnalyticsInput input = new internal.input.AnalyticsInput(
+            inventory, sales, orders, shipments, warehouses, suppliers, forecasts
+        );
+        internal.KPIResultInternal kpis = new AnalyticsEngine().compute(input);
 
         assertDoubleEquals(700.0, kpis.getTotalRevenue(), "Total revenue");
         assertEquals(2, kpis.getTotalOrders(), "Total orders");

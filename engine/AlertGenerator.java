@@ -1,5 +1,6 @@
 package engine;
 
+import internal.input.AlertInput;
 import model.InventoryData;
 import model.ShipmentData;
 
@@ -10,7 +11,9 @@ public class AlertGenerator {
 
     private static final int LOW_INVENTORY_THRESHOLD = 10;
 
-    public List<String> generate(List<InventoryData> inventory, List<ShipmentData> shipments) {
+    public List<String> generate(AlertInput input) {
+        List<InventoryData> inventory = input.getInventory();
+        List<ShipmentData> shipments = input.getShipments();
         List<String> alerts = new ArrayList<>();
 
         inventory.stream()
