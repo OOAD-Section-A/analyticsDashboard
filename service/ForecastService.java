@@ -2,7 +2,7 @@ package service;
 
 import exception.AnalyticsExceptionSource;
 import model.ForecastData;
-import repository.ForecastRepository;
+import repository.interfaces.ForecastRepositoryInterface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,10 +11,10 @@ public class ForecastService {
 
     private static final int INVALID_DATA_ID = 2002;
 
-    private final ForecastRepository repository;
+    private final ForecastRepositoryInterface repository;
     private final AnalyticsExceptionSource exceptionSource;
 
-    public ForecastService(ForecastRepository repository, AnalyticsExceptionSource exceptionSource) {
+    public ForecastService(ForecastRepositoryInterface repository, AnalyticsExceptionSource exceptionSource) {
         this.repository = repository;
         this.exceptionSource = exceptionSource;
     }

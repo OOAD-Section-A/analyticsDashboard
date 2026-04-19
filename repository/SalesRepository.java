@@ -4,11 +4,12 @@ import com.jackfruit.scm.database.facade.SupplyChainDatabaseFacade;
 import com.jackfruit.scm.database.model.DemandForecastingModels;
 import exception.AnalyticsExceptionSource;
 import model.SalesData;
+import repository.interfaces.SalesRepositoryInterface;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SalesRepository {
+public class SalesRepository implements SalesRepositoryInterface {
 
     private static final int CONNECTION_FAILURE_ID = 1004;
 

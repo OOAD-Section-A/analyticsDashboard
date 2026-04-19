@@ -2,7 +2,7 @@ package service;
 
 import exception.AnalyticsExceptionSource;
 import model.InventoryData;
-import repository.InventoryRepository;
+import repository.interfaces.InventoryRepositoryInterface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,10 +11,10 @@ public class InventoryService {
 
     private static final int INVALID_DATA_ID = 2001;
 
-    private final InventoryRepository repository;
+    private final InventoryRepositoryInterface repository;
     private final AnalyticsExceptionSource exceptionSource;
 
-    public InventoryService(InventoryRepository repository, AnalyticsExceptionSource exceptionSource) {
+    public InventoryService(InventoryRepositoryInterface repository, AnalyticsExceptionSource exceptionSource) {
         this.repository = repository;
         this.exceptionSource = exceptionSource;
     }

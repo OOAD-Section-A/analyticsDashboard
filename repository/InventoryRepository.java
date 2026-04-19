@@ -7,12 +7,13 @@ import com.jackfruit.scm.database.model.InventoryModels;
 import com.jackfruit.scm.database.model.ReportingModels;
 import exception.AnalyticsExceptionSource;
 import model.InventoryData;
+import repository.interfaces.InventoryRepositoryInterface;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class InventoryRepository {
+public class InventoryRepository implements InventoryRepositoryInterface {
 
     private static final int CONNECTION_FAILURE_ID = 1001;
 
@@ -43,7 +44,7 @@ public class InventoryRepository {
                             productNames.getOrDefault(stockLevel.productId(), stockLevel.productId()),
                             stockLevel.currentStockQty(),
                             warehouseByProduct.get(stockLevel.productId()),
-                            0.0
+                            stockLevel.unitCost() != null ? stockLevel.unitCost().doubleValue() : 0.0
                     ))
                     .collect(Collectors.toList());
         } catch (Exception ex) {

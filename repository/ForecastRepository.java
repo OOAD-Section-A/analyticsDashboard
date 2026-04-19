@@ -4,11 +4,12 @@ import com.jackfruit.scm.database.facade.SupplyChainDatabaseFacade;
 import com.jackfruit.scm.database.model.DemandForecast;
 import exception.AnalyticsExceptionSource;
 import model.ForecastData;
+import repository.interfaces.ForecastRepositoryInterface;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ForecastRepository {
+public class ForecastRepository implements ForecastRepositoryInterface {
 
     private static final int CONNECTION_FAILURE_ID = 1002;
 
@@ -33,7 +34,7 @@ public class ForecastRepository {
         return new ForecastData(
                 forecast.getProductId(),
                 forecast.getPredictedDemand(),
-                0,
+                forecast.getActualDemand() != null ? forecast.getActualDemand() : 0,
                 forecast.getForecastDate(),
                 forecast.getForecastDate()
         );

@@ -2,7 +2,7 @@ package service;
 
 import exception.AnalyticsExceptionSource;
 import model.ShipmentData;
-import repository.ShipmentRepository;
+import repository.interfaces.ShipmentRepositoryInterface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,10 +11,10 @@ public class ShipmentService {
 
     private static final int INVALID_DATA_ID = 2005;
 
-    private final ShipmentRepository repository;
+    private final ShipmentRepositoryInterface repository;
     private final AnalyticsExceptionSource exceptionSource;
 
-    public ShipmentService(ShipmentRepository repository, AnalyticsExceptionSource exceptionSource) {
+    public ShipmentService(ShipmentRepositoryInterface repository, AnalyticsExceptionSource exceptionSource) {
         this.repository = repository;
         this.exceptionSource = exceptionSource;
     }

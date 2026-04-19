@@ -2,7 +2,7 @@ package service;
 
 import exception.AnalyticsExceptionSource;
 import model.SupplierData;
-import repository.SupplierRepository;
+import repository.interfaces.SupplierRepositoryInterface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,10 +11,10 @@ public class SupplierService {
 
     private static final int INVALID_DATA_ID = 2006;
 
-    private final SupplierRepository repository;
+    private final SupplierRepositoryInterface repository;
     private final AnalyticsExceptionSource exceptionSource;
 
-    public SupplierService(SupplierRepository repository, AnalyticsExceptionSource exceptionSource) {
+    public SupplierService(SupplierRepositoryInterface repository, AnalyticsExceptionSource exceptionSource) {
         this.repository = repository;
         this.exceptionSource = exceptionSource;
     }
