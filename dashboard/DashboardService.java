@@ -32,6 +32,10 @@ import service.ShipmentService;
 import service.SupplierService;
 import service.WarehouseService;
 
+// --- NEW IMPORTS FOR REQUIREMENT 1 ---
+import com.pricingos.reporting.MarginProfitabilityServiceImpl;
+import com.pricingos.common.MarginProfitabilityResult;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class DashboardService {
@@ -63,14 +67,24 @@ public class DashboardService {
         List<SupplierData> suppliers = new SupplierService(supplierRepository, exceptionSource).getCleanedData();
         List<ForecastData> forecasts = new ForecastService(forecastRepository, exceptionSource).getCleanedData();
 
+        // --- NEW: MARGIN PROFITABILITY INTEGRATION ---
+        MarginProfitabilityServiceImpl marginService = new MarginProfitabilityServiceImpl();
+        LocalDateTime endDate = LocalDateTime.now();
+        LocalDateTime startDate = endDate.minusDays(30); // Define a time window (e.g., last 30 days)
+        MarginProfitabilityResult marginResult = marginService.getMarginProfitabilitySummary(startDate, endDate);
+        // ---------------------------------------------
+
         KPIResult kpis = new AnalyticsEngine()
                 .compute(inventory, sales, orders, shipments, warehouses, suppliers, forecasts);
 
         List<String> insights = new InsightAggregator().generate(kpis);
         List<String> alerts = new AlertGenerator().generate(inventory, shipments);
         VisualizationDTO visualizations = new VisualizationEngine().buildCharts(sales, inventory);
-        ReportDTO report = new ReportGenerator().generate(kpis, insights, alerts);
+        
+        // Pass marginResult to the ReportGenerator so it can be included in the summary
+        ReportDTO report = new ReportGenerator().generate(kpis, insights, alerts, marginResult);
 
-        return new DashboardDTO(kpis, insights, alerts, visualizations, report);
+        // Include marginResult in the final DTO for the UI team
+        return new DashboardDTO(kpis, insights, alerts, visualizations, report, marginResult);
     }
 }
