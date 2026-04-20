@@ -3,3 +3,25 @@ _db_classes/
 db.jar
 database.properties
 .vscode/
+
+# Java / Maven
+target/
+*.jar
+*.log
+
+# Node
+node_modules/
+ui/node_modules/
+
+# Build outputs
+ui/build/
+
+# Cache
+.cache/
+ui/node_modules/.cache/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+target/

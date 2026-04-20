@@ -31,14 +31,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.jackfruit.scm</groupId>
-            <artifactId>common</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/common/common.jar</systemPath>
-        </dependency>
-        <!-- Add any other dependencies your project needs -->
     </dependencies>
 
     <build>
