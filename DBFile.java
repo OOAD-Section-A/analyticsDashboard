@@ -1,62 +1,62 @@
-import com.jackfruit.scm.database.facade.SupplyChainDatabaseFacade;
-import com.jackfruit.scm.database.adapter.InventoryAdapter;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
 
 public class DBFile {
     public static void main(String[] args) {
-        try (SupplyChainDatabaseFacade facade = new SupplyChainDatabaseFacade()) {
-            InventoryAdapter inventoryAdapter = new InventoryAdapter(facade);
+        AutoCloseable facadeCloser = null;
 
-            // Test: List all products
-            System.out.println("Products:");
-            inventoryAdapter.listProducts().forEach(product ->
-                System.out.println(product.productName())
-            );
+        try {
+            AdapterContext context = createReportingAdapter();
+            Object reportingAdapter = context.adapter();
+            facadeCloser = context.facadeCloser();
 
-            // You can add more queries here using other adapters or facade methods
+            Method dashboardMethod = reportingAdapter.getClass().getMethod("getDashboardReport");
+            Object result = dashboardMethod.invoke(reportingAdapter);
+
+            if (result instanceof List<?> rows) {
+                System.out.println("Dashboard rows fetched: " + rows.size());
+                rows.stream().limit(5).forEach(System.out::println);
+            } else {
+                System.out.println("Unexpected getDashboardReport() result type: " + result);
+            }
+        } catch (NoClassDefFoundError e) {
+            System.err.println("Database module is missing required runtime classes: " + e.getMessage());
+            System.err.println("Ask DB team for the full updated JAR set (or standalone JAR that includes all required classes).");
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            Throwable cause = e.getCause() == null ? e : e.getCause();
+            System.err.println("Database call failed: " + cause.getMessage());
+            cause.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-}
-/*
-import dashboard.DashboardService;
-import dto.DashboardDTO;
-
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Properties;
-
-public class DBFile {
-
-    public static void main(String[] args) {
-        try {
-            URL resource = DBFile.class.getClassLoader().getResource("database.properties");
-            System.out.println("database.properties resource: " + resource);
-
-            if (resource != null) {
-                Properties properties = new Properties();
-                try (InputStream inputStream = resource.openStream()) {
-                    properties.load(inputStream);
+        } finally {
+            if (facadeCloser != null) {
+                try {
+                    facadeCloser.close();
+                } catch (Exception closeError) {
+                    System.err.println("Failed to close facade: " + closeError.getMessage());
                 }
-                System.out.println("db.url=" + properties.getProperty("db.url"));
-                System.out.println("db.username=" + properties.getProperty("db.username"));
-                String password = properties.getProperty("db.password");
-                System.out.println("db.password.length=" + (password == null ? 0 : password.length()));
             }
-
-            DashboardDTO dashboard = new DashboardService().buildDashboard();
-
-            System.out.println("Analytics dashboard smoke test passed.");
-            System.out.println("Insights: " + dashboard.getInsights().size());
-            System.out.println("Alerts: " + dashboard.getAlerts().size());
-            System.out.println("Revenue series size: " + dashboard.getVisualizations().getRevenueByProduct().size());
-            System.out.println("Inventory series size: " + dashboard.getVisualizations().getInventoryLevels().size());
-            System.out.println("Total revenue KPI: " + dashboard.getKpis().getTotalRevenue());
-        } catch (Exception ex) {
-            System.err.println("Analytics dashboard smoke test failed.");
-            ex.printStackTrace();
-            System.exit(1);
         }
     }
+
+    private static AdapterContext createReportingAdapter() throws Exception {
+        Class<?> adapterClass = Class.forName("com.jackfruit.scm.database.adapter.ReportingAdapter");
+
+        // Preferred path for new DB module builds where adapter owns connection setup.
+        try {
+            Object adapter = adapterClass.getDeclaredConstructor().newInstance();
+            return new AdapterContext(adapter, null);
+        } catch (NoSuchMethodException ignored) {
+            // Fall back to older facade-based adapter wiring.
+        }
+
+        Class<?> facadeClass = Class.forName("com.jackfruit.scm.database.facade.SupplyChainDatabaseFacade");
+        Object facade = facadeClass.getDeclaredConstructor().newInstance();
+        Object adapter = adapterClass.getDeclaredConstructor(facadeClass).newInstance(facade);
+        return new AdapterContext(adapter, (AutoCloseable) facade);
+    }
+
+    private record AdapterContext(Object adapter, AutoCloseable facadeCloser) {}
 }
-*/
