@@ -5,7 +5,7 @@ public class DBFile {
     public static void main(String[] args) {
         try (SupplyChainDatabaseFacade facade = new SupplyChainDatabaseFacade()) {
             ReportingAdapter reportingAdapter = new ReportingAdapter(facade);
-            boolean enableDashboardReport = false;
+            boolean enableDashboardReport = true; // Set to false to skip dashboard report due to known type-casting issue
 
             runCheck("getInventoryStockReport", () -> reportingAdapter.getInventoryStockReport().size());
             runCheck("getPriceDiscountReport", () -> reportingAdapter.getPriceDiscountReport().size());
