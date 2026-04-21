@@ -13,8 +13,8 @@
 - Used the adapter classes (e.g., `InventoryAdapter`) in Java code to fetch and print data successfully.
 
 ## Key Commands
-- Compile: `javac -cp "lib/database-module-1.0.0-SNAPSHOT-standalone.jar" DBFile.java`
-- Run: `java -cp ".;lib/database-module-1.0.0-SNAPSHOT-standalone.jar" DBFile`
+- Compile: `javac -cp ".;lib/database-module-1.0.0-SNAPSHOT-standalone.jar;./lib/scm-exception-handler-v3.jar" DBFile.java`
+- Run: `java -cp ".;lib/database-module-1.0.0-SNAPSHOT-standalone.jar;./lib/scm-exception-handler-v3.jar" DBFile`
 
 ---
 If you face connection issues, double-check your `database.properties` and ensure the DB server is running with the correct credentials.
