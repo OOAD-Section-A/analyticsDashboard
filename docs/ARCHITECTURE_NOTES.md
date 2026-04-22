@@ -5,6 +5,7 @@ This file collects the main architecture points for the Reporting & Analytics su
 - what a design pattern is
 - which design patterns we used
 - how MVC applies here
+- which GRASP principles are followed
 - which SOLID principles are followed, and where
 
 ## 1. What Is A Design Pattern?
@@ -39,7 +40,7 @@ Supporting file:
 
 ### Adapter
 
-This is used in the repository layer when data from the shared database jar is converted into local domain models.
+This is used in the repository layer when data from the shared database JAR is converted into local domain models.
 
 Why it fits:
 
@@ -141,10 +142,102 @@ It is better described as:
 
 So in class, you can safely say:
 
-- “Yes, MVC concepts are used.”
-- “The code is better described as MVC-inspired with extra service, repository, and mapper layers.”
+- "Yes, MVC concepts are used."
+- "The code is better described as MVC-inspired with extra service, repository, and mapper layers."
 
-## 4. SOLID Principles In This Subsystem
+## 4. GRASP Principles In This Subsystem
+
+GRASP stands for General Responsibility Assignment Software Patterns.
+
+### Information Expert
+
+Each class stores and processes the data it is responsible for.
+
+Examples:
+
+- repositories know how to fetch their own data
+- services know how to clean their own data
+- engines know how to calculate analytics
+
+Useful files:
+
+- [`SalesRepository.java`](../repository/SalesRepository.java)
+- [`InventoryRepository.java`](../repository/InventoryRepository.java)
+- [`SalesService.java`](../service/SalesService.java)
+- [`AnalyticsEngine.java`](../engine/AnalyticsEngine.java)
+
+### Creator
+
+Classes create objects that belong to their workflow.
+
+Examples:
+
+- `DashboardService` creates the repositories, services, and engines needed to build the dashboard
+- `DashboardMapper` creates DTOs from internal results
+
+Useful files:
+
+- [`DashboardService.java`](../dashboard/DashboardService.java)
+- [`DashboardMapper.java`](../mapper/DashboardMapper.java)
+
+### Controller
+
+The controller pattern in GRASP assigns input handling to a dedicated class.
+
+Here, the web controller handles requests and delegates work to the dashboard service.
+
+Useful file:
+
+- [`DashboardController.java`](../com/analytics/DashboardController.java)
+
+### Low Coupling
+
+The subsystem keeps dependencies separated through interfaces and layers.
+
+Examples:
+
+- services depend on repository interfaces
+- the controller depends on `DashboardService`
+- the UI depends on the REST API, not on the database directly
+
+Useful files:
+
+- [`repository/interfaces/`](../repository/interfaces)
+- [`DashboardController.java`](../com/analytics/DashboardController.java)
+- [`Dashboard.jsx`](../ui/src/Dashboard.jsx)
+
+### High Cohesion
+
+Each class has one clear responsibility.
+
+Examples:
+
+- repositories only fetch data
+- services only clean and validate
+- engines only calculate results
+- mapper only converts data
+
+Useful files:
+
+- [`SalesService.java`](../service/SalesService.java)
+- [`ReportGenerator.java`](../engine/ReportGenerator.java)
+- [`DashboardMapper.java`](../mapper/DashboardMapper.java)
+
+### Pure Fabrication
+
+Some helper classes exist to keep the design clean, even if they are not real business entities.
+
+Examples:
+
+- `RepositoryExceptionSupport` centralizes repository error handling
+- `DashboardMapper` centralizes DTO conversion
+
+Useful files:
+
+- [`RepositoryExceptionSupport.java`](../repository/RepositoryExceptionSupport.java)
+- [`DashboardMapper.java`](../mapper/DashboardMapper.java)
+
+## 5. SOLID Principles In This Subsystem
 
 ### S - Single Responsibility Principle
 
@@ -233,9 +326,9 @@ Limitation:
 
 - [`DashboardService.java`](../dashboard/DashboardService.java) still creates many concrete objects directly, so dependency injection is not used everywhere
 
-## 5. Easy Viva Answer
+## 6. Easy Viva Answer
 
 If you need a short answer in class, you can say:
 
-“Our subsystem mainly uses the Facade pattern through `DashboardService`, and also uses Adapter in the repository layer to convert database jar objects into local models. It follows MVC concepts in a split frontend-backend form, and the SOLID principles are mostly followed through separate controller, service, repository, mapper, and engine layers.”
+"Our subsystem mainly uses the Facade pattern through `DashboardService`, and also uses Adapter in the repository layer to convert database JAR objects into local models. It follows MVC concepts in a split frontend-backend form, and the GRASP principles are visible through Information Expert, Low Coupling, High Cohesion, and Controller. The SOLID principles are mostly followed through separate controller, service, repository, mapper, and engine layers."
 
