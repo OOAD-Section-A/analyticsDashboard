@@ -2,7 +2,7 @@
 
 This guide explains the purpose of the important files and folders in this project.
 It focuses on the source and support files used by the dashboard. Generated folders
-such as `target/`, `ui/build/`, and `ui/node_modules/` are intentionally excluded.
+such as `target/` and the legacy ignored `ui/` folder are intentionally excluded.
 
 ## Root Files
 
@@ -103,16 +103,9 @@ These interfaces let the service layer depend on abstractions instead of concret
 
 - [`com/pricingos/reporting/MarginProfitabilityServiceImpl.java`](../com/pricingos/reporting/MarginProfitabilityServiceImpl.java) - Local implementation that queries profitability data for margin conceded and protected.
 
-## Frontend Files
+## Desktop UI
 
-- [`ui/package.json`](../ui/package.json) - React app dependencies and scripts.
-- [`ui/package-lock.json`](../ui/package-lock.json) - Locked npm dependency versions.
-- [`ui/public/index.html`](../ui/public/index.html) - HTML shell for the React app.
-- [`ui/src/App.js`](../ui/src/App.js) - Root React component.
-- [`ui/src/Dashboard.jsx`](../ui/src/Dashboard.jsx) - Main dashboard UI.
-- [`ui/src/Dashboard.css`](../ui/src/Dashboard.css) - Dashboard-specific styles.
-- [`ui/src/index.js`](../ui/src/index.js) - React app entry point.
-- [`ui/src/index.css`](../ui/src/index.css) - Global dashboard styles.
+- [`desktop/SwingDashboardApp.java`](../desktop/SwingDashboardApp.java) - Java Swing desktop dashboard that loads KPI, analytics, report, margin, and table data directly from the backend services.
 
 ## Database Support Files
 
@@ -140,5 +133,6 @@ These interfaces let the service layer depend on abstractions instead of concret
 ## Notes
 
 - The source root uses a flat layout instead of standard `src/main/java`.
+- The legacy `ui/` web folder is ignored and is not part of the current runtime path.
 - Generated build output is not documented here because it changes every build.
 - If you add a new backend or frontend file, update this guide so the submission stays current.

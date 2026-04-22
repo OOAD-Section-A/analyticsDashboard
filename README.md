@@ -5,7 +5,7 @@ Reports and analytics dashboard for the supply chain management project.
 ## What Is Included
 
 - Spring Boot backend in `com.analytics`, `dashboard`, `service`, `engine`, `repository`, `dto`, `model`, `internal`, and `common`
-- React frontend in `ui/src`
+- Java Swing desktop UI in `desktop/SwingDashboardApp.java`
 - Database integration through the shared database module JARs in `lib/`
 - Report export endpoint with TXT, CSV, and JSON downloads
 - Table data explorer with dataset and column filters
@@ -14,7 +14,6 @@ Reports and analytics dashboard for the supply chain management project.
 ## Prerequisites
 
 - Java 17 or later
-- Node.js and npm
 - MySQL running locally
 - The database credentials in `database.properties` must point to your local MySQL instance
 
@@ -30,27 +29,23 @@ mysql -u root -p OOAD < analyticsDashboard/sql/seed-local-demo.sql
 
 If `mysql` is not on your PATH, use the full path to `mysql.exe` or load the script in MySQL Workbench and execute it there.
 
-### 2. Start the backend
+### 2. Compile the project
 
 From the project root:
 
 ```bash
-mvn spring-boot:run
+mvn -q -DskipTests compile
 ```
 
-The backend runs on `http://localhost:8080`.
+### 3. Start the Swing desktop app
 
-### 3. Start the frontend
-
-In a second terminal:
+Run the desktop launcher after compilation:
 
 ```bash
-cd ui
-npm install
-npm start
+java -cp "target/classes;lib/*" desktop.SwingDashboardApp
 ```
 
-The React app runs on `http://localhost:3000` and calls the backend on port `8080`.
+The Swing app opens as a desktop window and talks directly to the analytics services.
 
 ## Main API Endpoints
 
@@ -79,4 +74,4 @@ Additional integration notes are in `docs/`.
 ## Notes
 
 - Keep `database.properties` configured with valid MySQL credentials.
-- The frontend report download uses the backend export endpoint, so the file matches the selected on-screen sections.
+- The Swing desktop app uses the same dashboard services, report export service, and table explorer service as the backend.

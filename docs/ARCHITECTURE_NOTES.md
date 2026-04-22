@@ -115,11 +115,11 @@ Examples:
 
 ### View
 
-The view is the React UI.
+The view is the Java Swing UI.
 
 Main file:
 
-- [`Dashboard.jsx`](../ui/src/Dashboard.jsx)
+- [`SwingDashboardApp.java`](../desktop/SwingDashboardApp.java)
 
 ### Controller
 
@@ -136,7 +136,7 @@ This is not a pure textbook single-process MVC app.
 It is better described as:
 
 - Spring Boot controller as the backend controller
-- React as the frontend view
+- Java Swing as the desktop view
 - domain objects, DTOs, and analytics classes as the model side
 - service and repository layers between controller and model
 
@@ -331,4 +331,3 @@ Limitation:
 If you need a short answer in class, you can say:
 
 "Our subsystem mainly uses the Facade pattern through `DashboardService`, and also uses Adapter in the repository layer to convert database JAR objects into local models. It follows MVC concepts in a split frontend-backend form, and the GRASP principles are visible through Information Expert, Low Coupling, High Cohesion, and Controller. The SOLID principles are mostly followed through separate controller, service, repository, mapper, and engine layers."
-

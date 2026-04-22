@@ -1,7 +1,5 @@
 package service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.jackfruit.scm.database.adapter.ReportingAdapter;
 import com.jackfruit.scm.database.facade.SupplyChainDatabaseFacade;
 import com.jackfruit.scm.database.model.ReportingModels;
@@ -10,9 +8,7 @@ import dto.KPIResult;
 import dto.ReportDTO;
 import dto.VisualizationDTO;
 
-import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -22,7 +18,6 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 public class ReportExportService {
-    private static final ObjectMapper JSON = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
     private static final DateTimeFormatter DATE_TIME = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public record ExportedReport(String content, String mediaType, String fileName) {
@@ -181,11 +176,7 @@ public class ReportExportService {
     }
 
     private String toJson(Map<String, Object> payload) {
-        try {
-            return JSON.writeValueAsString(payload);
-        } catch (Exception ex) {
-            return "{\"error\":\"Unable to serialize report: " + escapeJson(ex.getMessage()) + "\"}";
-        }
+        return stringifyJson(payload, 0);
     }
 
     private String toText(Map<String, Object> payload) {
@@ -297,6 +288,61 @@ public class ReportExportService {
 
     private String escapeCsv(String value) {
         return value == null ? "" : value.replace("\"", "\"\"");
+    }
+
+    private String stringifyJson(Object value, int indent) {
+        String padding = " ".repeat(indent);
+        String childPadding = " ".repeat(indent + 2);
+
+        if (value == null) {
+            return "null";
+        }
+        if (value instanceof String str) {
+            return "\"" + escapeJson(str) + "\"";
+        }
+        if (value instanceof Number || value instanceof Boolean) {
+            return String.valueOf(value);
+        }
+        if (value instanceof Map<?, ?> map) {
+            StringBuilder builder = new StringBuilder();
+            builder.append("{");
+            if (!map.isEmpty()) {
+                builder.append('\n');
+                int index = 0;
+                for (Map.Entry<?, ?> entry : map.entrySet()) {
+                    builder.append(childPadding)
+                            .append('"').append(escapeJson(String.valueOf(entry.getKey()))).append('"')
+                            .append(": ")
+                            .append(stringifyJson(entry.getValue(), indent + 2));
+                    if (++index < map.size()) {
+                        builder.append(',');
+                    }
+                    builder.append('\n');
+                }
+                builder.append(padding);
+            }
+            builder.append("}");
+            return builder.toString();
+        }
+        if (value instanceof List<?> list) {
+            StringBuilder builder = new StringBuilder();
+            builder.append("[");
+            if (!list.isEmpty()) {
+                builder.append('\n');
+                for (int i = 0; i < list.size(); i++) {
+                    builder.append(childPadding)
+                            .append(stringifyJson(list.get(i), indent + 2));
+                    if (i < list.size() - 1) {
+                        builder.append(',');
+                    }
+                    builder.append('\n');
+                }
+                builder.append(padding);
+            }
+            builder.append("]");
+            return builder.toString();
+        }
+        return "\"" + escapeJson(String.valueOf(value)) + "\"";
     }
 
     private String escapeJson(String value) {

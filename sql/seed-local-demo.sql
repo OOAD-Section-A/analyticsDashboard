@@ -10,7 +10,10 @@ INSERT INTO proc_suppliers (supplier_id, name, avg_lead_time, reliability_score,
 VALUES
     ('SUP-001', 'Green Valley Farms', 3, 96.50, 'ACTIVE'),
     ('SUP-002', 'Sunrise Produce Co.', 5, 91.20, 'ACTIVE'),
-    ('SUP-003', 'FreshLine Wholesale', 4, 93.75, 'ACTIVE')
+    ('SUP-003', 'FreshLine Wholesale', 4, 93.75, 'ACTIVE'),
+    ('SUP-004', 'Amaravati Agro', 2, 97.10, 'ACTIVE'),
+    ('SUP-005', 'Punjab Fresh', 6, 89.80, 'ACTIVE'),
+    ('SUP-006', 'Kerala Spices', 7, 92.00, 'ACTIVE')
 ON DUPLICATE KEY UPDATE
     name = VALUES(name),
     avg_lead_time = VALUES(avg_lead_time),
@@ -20,7 +23,9 @@ ON DUPLICATE KEY UPDATE
 INSERT INTO warehouses (warehouse_id, warehouse_name)
 VALUES
     ('WH-001', 'Central Distribution Center'),
-    ('WH-002', 'South City Hub')
+    ('WH-002', 'South City Hub'),
+    ('WH-003', 'Mumbai Mega Warehouse'),
+    ('WH-004', 'Delhi North Hub')
 ON DUPLICATE KEY UPDATE
     warehouse_name = VALUES(warehouse_name);
 
@@ -28,7 +33,9 @@ INSERT INTO warehouse_zones (zone_id, warehouse_id, zone_type, temperature_class
 VALUES
     ('ZONE-001', 'WH-001', 'STORAGE', 'AMBIENT'),
     ('ZONE-002', 'WH-001', 'PICKING', 'AMBIENT'),
-    ('ZONE-003', 'WH-002', 'STORAGE', 'COLD')
+    ('ZONE-003', 'WH-002', 'STORAGE', 'COLD'),
+    ('ZONE-004', 'WH-003', 'STORAGE', 'COLD'),
+    ('ZONE-005', 'WH-004', 'PICKING', 'AMBIENT')
 ON DUPLICATE KEY UPDATE
     warehouse_id = VALUES(warehouse_id),
     zone_type = VALUES(zone_type),
@@ -38,7 +45,9 @@ INSERT INTO bins (bin_id, zone_id, bin_capacity, bin_status, max_weight_kg, barc
 VALUES
     ('BIN-A1', 'ZONE-001', 500, 'OCCUPIED', 1200.00, 'BC-BIN-A1'),
     ('BIN-A2', 'ZONE-001', 400, 'AVAILABLE', 900.00, 'BC-BIN-A2'),
-    ('BIN-B1', 'ZONE-003', 350, 'OCCUPIED', 800.00, 'BC-BIN-B1')
+    ('BIN-B1', 'ZONE-003', 350, 'OCCUPIED', 800.00, 'BC-BIN-B1'),
+    ('BIN-C1', 'ZONE-004', 600, 'AVAILABLE', 1500.00, 'BC-BIN-C1'),
+    ('BIN-D1', 'ZONE-005', 300, 'OCCUPIED', 700.00, 'BC-BIN-D1')
 ON DUPLICATE KEY UPDATE
     zone_id = VALUES(zone_id),
     bin_capacity = VALUES(bin_capacity),
@@ -63,6 +72,18 @@ VALUES
     (
         'PROD-MNG-001', 'Mangoes', 'SKU-MNG-001', 'Fruits', 'Fresh Produce', 'SUP-003',
         'KG', 'AMBIENT', 60, NULL, 'Avoid direct sunlight', 14
+    ),
+    (
+        'PROD-ALF-001', 'Alphonso Mango', 'SKU-ALF-001', 'Fruits', 'Premium Mango', 'SUP-004',
+        'KG', 'COLD STORAGE', 50, NULL, 'Keep refrigerated between 8-10 C', 10
+    ),
+    (
+        'PROD-BSR-001', 'Basmati Rice', 'SKU-BSR-001', 'Grains', 'Rice', 'SUP-005',
+        'KG', 'AMBIENT', 200, NULL, 'Store in dry place', 365
+    ),
+    (
+        'PROD-KSP-001', 'Kerala Black Pepper', 'SKU-KSP-001', 'Spices', 'Pepper', 'SUP-006',
+        'KG', 'AMBIENT', 30, NULL, 'Keep airtight', 730
     )
 ON DUPLICATE KEY UPDATE
     product_name = VALUES(product_name),
@@ -93,6 +114,18 @@ VALUES
     (
         'SL-003', 'PROD-MNG-001', 90, 10, 80, 60, 90, 30,
         'ZONE-003', 'HEALTHY', '2026-04-05 09:00:00'
+    ),
+    (
+        'SL-004', 'PROD-ALF-001', 60, 5, 55, 50, 60, 20,
+        'ZONE-004', 'HEALTHY', '2026-04-05 09:00:00'
+    ),
+    (
+        'SL-005', 'PROD-BSR-001', 500, 50, 450, 200, 300, 100,
+        'ZONE-005', 'HEALTHY', '2026-04-05 09:00:00'
+    ),
+    (
+        'SL-006', 'PROD-KSP-001', 40, 2, 38, 30, 20, 10,
+        'ZONE-005', 'HEALTHY', '2026-04-05 09:00:00'
     )
 ON DUPLICATE KEY UPDATE
     current_stock_qty = VALUES(current_stock_qty),
@@ -109,7 +142,10 @@ INSERT INTO stock_records (stock_id, product_id, bin_id, quantity, batch_id, lpn
 VALUES
     ('SR-001', 'PROD-APL-001', 'BIN-A1', 260, 'BATCH-APL-001', NULL, '2026-04-05 09:00:00'),
     ('SR-002', 'PROD-BAN-001', 'BIN-A2', 140, 'BATCH-BAN-001', NULL, '2026-04-05 09:00:00'),
-    ('SR-003', 'PROD-MNG-001', 'BIN-B1', 90, 'BATCH-MNG-001', NULL, '2026-04-05 09:00:00')
+    ('SR-003', 'PROD-MNG-001', 'BIN-B1', 90, 'BATCH-MNG-001', NULL, '2026-04-05 09:00:00'),
+    ('SR-004', 'PROD-ALF-001', 'BIN-C1', 60, 'BATCH-ALF-001', NULL, '2026-04-05 09:00:00'),
+    ('SR-005', 'PROD-BSR-001', 'BIN-D1', 500, 'BATCH-BSR-001', NULL, '2026-04-05 09:00:00'),
+    ('SR-006', 'PROD-KSP-001', 'BIN-D1', 40, 'BATCH-KSP-001', NULL, '2026-04-05 09:00:00')
 ON DUPLICATE KEY UPDATE
     product_id = VALUES(product_id),
     bin_id = VALUES(bin_id),
@@ -134,6 +170,18 @@ VALUES
     (
         'PRICE-MNG-001', 'SKU-MNG-001', 'SOUTH', 'RETAIL', 'RETAIL', 150.00, 130.00,
         'INR', '2026-04-01 00:00:00', '2026-05-01 00:00:00', 'ACTIVE'
+    ),
+    (
+        'PRICE-ALF-001', 'SKU-ALF-001', 'WEST', 'RETAIL', 'RETAIL', 300.00, 250.00,
+        'INR', '2026-04-01 00:00:00', '2026-05-01 00:00:00', 'ACTIVE'
+    ),
+    (
+        'PRICE-BSR-001', 'SKU-BSR-001', 'NORTH', 'RETAIL', 'RETAIL', 90.00, 80.00,
+        'INR', '2026-04-01 00:00:00', '2026-05-01 00:00:00', 'ACTIVE'
+    ),
+    (
+        'PRICE-KSP-001', 'SKU-KSP-001', 'SOUTH', 'RETAIL', 'RETAIL', 600.00, 550.00,
+        'INR', '2026-04-01 00:00:00', '2026-05-01 00:00:00', 'ACTIVE'
     )
 ON DUPLICATE KEY UPDATE
     base_price = VALUES(base_price),
@@ -149,7 +197,10 @@ INSERT INTO orders (
 VALUES
     ('ORD-1001', 'CUST-101', 'CONFIRMED', '2026-04-05 10:15:00', 420.00, 'PAID', 'ONLINE'),
     ('ORD-1002', 'CUST-102', 'FULFILLED', '2026-04-05 11:05:00', 240.00, 'PAID', 'POS'),
-    ('ORD-1003', 'CUST-103', 'CONFIRMED', '2026-04-05 12:30:00', 450.00, 'PAID', 'ONLINE')
+    ('ORD-1003', 'CUST-103', 'CONFIRMED', '2026-04-05 12:30:00', 450.00, 'PAID', 'ONLINE'),
+    ('ORD-1004', 'CUST-104', 'CONFIRMED', '2026-04-06 09:00:00', 600.00, 'PAID', 'ONLINE'),
+    ('ORD-1005', 'CUST-105', 'FULFILLED', '2026-04-06 10:30:00', 1800.00, 'PAID', 'POS'),
+    ('ORD-1006', 'CUST-106', 'CONFIRMED', '2026-04-06 11:45:00', 24000.00, 'PAID', 'ONLINE')
 ON DUPLICATE KEY UPDATE
     customer_id = VALUES(customer_id),
     order_status = VALUES(order_status),
@@ -164,7 +215,10 @@ INSERT INTO order_items (
 VALUES
     ('ITEM-1001', 'ORD-1001', 'PROD-APL-001', 3, 120.00, 360.00),
     ('ITEM-1002', 'ORD-1002', 'PROD-BAN-001', 2, 80.00, 160.00),
-    ('ITEM-1003', 'ORD-1003', 'PROD-MNG-001', 3, 150.00, 450.00)
+    ('ITEM-1003', 'ORD-1003', 'PROD-MNG-001', 3, 150.00, 450.00),
+    ('ITEM-1004', 'ORD-1004', 'PROD-ALF-001', 2, 300.00, 600.00),
+    ('ITEM-1005', 'ORD-1005', 'PROD-BSR-001', 20, 90.00, 1800.00),
+    ('ITEM-1006', 'ORD-1006', 'PROD-KSP-001', 40, 600.00, 24000.00)
 ON DUPLICATE KEY UPDATE
     order_id = VALUES(order_id),
     product_id = VALUES(product_id),
@@ -188,6 +242,18 @@ VALUES
     (
         'SHIP-1003', 'ORD-1003', 'CUST-103', 'Chennai, Tamil Nadu', 'DELAYED', NULL,
         'STANDARD', 75.00, 'AGENT-13', 'WH-002', '2026-04-05 12:45:00', '2026-04-07 09:15:00'
+    ),
+    (
+        'SHIP-1004', 'ORD-1004', 'CUST-104', 'Ratnagiri, Maharashtra', 'DELIVERED', '2026-04-07 10:00:00',
+        'STANDARD', 80.00, 'AGENT-14', 'WH-003', '2026-04-06 09:30:00', '2026-04-07 10:00:00'
+    ),
+    (
+        'SHIP-1005', 'ORD-1005', 'CUST-105', 'Amritsar, Punjab', 'DELIVERED', '2026-04-07 12:00:00',
+        'EXPRESS', 120.00, 'AGENT-15', 'WH-004', '2026-04-06 10:45:00', '2026-04-07 12:00:00'
+    ),
+    (
+        'SHIP-1006', 'ORD-1006', 'CUST-106', 'Kochi, Kerala', 'IN_TRANSIT', NULL,
+        'STANDARD', 200.00, 'AGENT-16', 'WH-004', '2026-04-06 12:00:00', '2026-04-06 12:00:00'
     )
 ON DUPLICATE KEY UPDATE
     order_id = VALUES(order_id),
@@ -208,7 +274,10 @@ INSERT INTO sales_records (
 VALUES
     ('SALE-1001', 'PROD-APL-001', 'STORE-01', '2026-04-05', 3, 120.00, 360.00, 'SOUTH'),
     ('SALE-1002', 'PROD-BAN-001', 'STORE-01', '2026-04-05', 2, 80.00, 160.00, 'SOUTH'),
-    ('SALE-1003', 'PROD-MNG-001', 'STORE-02', '2026-04-05', 3, 150.00, 450.00, 'SOUTH')
+    ('SALE-1003', 'PROD-MNG-001', 'STORE-02', '2026-04-05', 3, 150.00, 450.00, 'SOUTH'),
+    ('SALE-1004', 'PROD-ALF-001', 'STORE-03', '2026-04-06', 2, 300.00, 600.00, 'WEST'),
+    ('SALE-1005', 'PROD-BSR-001', 'STORE-04', '2026-04-06', 20, 90.00, 1800.00, 'NORTH'),
+    ('SALE-1006', 'PROD-KSP-001', 'STORE-05', '2026-04-06', 40, 600.00, 24000.00, 'SOUTH')
 ON DUPLICATE KEY UPDATE
     product_id = VALUES(product_id),
     store_id = VALUES(store_id),
