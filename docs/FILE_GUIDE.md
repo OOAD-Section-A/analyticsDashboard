@@ -1,14 +1,14 @@
 # File Guide
 
 This guide explains the purpose of the important files and folders in this project.
-It focuses on the source and support files used by the dashboard. Generated folders
+It focuses on the source and support files used by the Swing dashboard. Generated folders
 such as `target/` and the legacy ignored `ui/` folder are intentionally excluded.
 
 ## Root Files
 
 - [`README.md`](../README.md) - Main project overview and run instructions.
-- [`pom.xml`](../pom.xml) - Maven build file for the Spring Boot backend.
-- [`application.properties`](../application.properties) - Spring Boot runtime settings.
+- [`pom.xml`](../pom.xml) - Maven build file for the backend application.
+- [`application.properties`](../application.properties) - Application runtime settings.
 - [`database.properties`](../database.properties) - MySQL connection settings used by the database module.
 - [`prompt.txt`](../prompt.txt) - Saved prompt/reference notes used during development.
 - [`DBFile.java`](../DBFile.java) - Local helper used to test the database module JAR.
@@ -16,8 +16,8 @@ such as `target/` and the legacy ignored `ui/` folder are intentionally excluded
 
 ## Backend Entry Point
 
-- [`com/analytics/AnalyticsDashboardApplication.java`](../com/analytics/AnalyticsDashboardApplication.java) - Spring Boot application entry point.
-- [`com/analytics/DashboardController.java`](../com/analytics/DashboardController.java) - REST controller that exposes the dashboard, report export, and table view endpoints.
+- [`com/analytics/AnalyticsDashboardApplication.java`](../com/analytics/AnalyticsDashboardApplication.java) - Main backend application entry point.
+- [`com/analytics/DashboardController.java`](../com/analytics/DashboardController.java) - Controller that exposes the dashboard, report export, and table view endpoints.
 
 ## Dashboard Orchestration
 
@@ -133,6 +133,6 @@ These interfaces let the service layer depend on abstractions instead of concret
 ## Notes
 
 - The source root uses a flat layout instead of standard `src/main/java`.
-- The legacy `ui/` web folder is ignored and is not part of the current runtime path.
+- The legacy `ui/` folder is ignored and is not part of the current runtime path.
 - Generated build output is not documented here because it changes every build.
-- If you add a new backend or frontend file, update this guide so the submission stays current.
+- If you add a new backend or desktop file, update this guide so the submission stays current.

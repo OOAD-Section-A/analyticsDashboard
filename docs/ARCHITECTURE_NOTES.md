@@ -59,7 +59,7 @@ Main files:
 
 ### DTO Pattern
 
-We use DTOs to send clean API data to the frontend without exposing internal implementation objects.
+We use DTOs to send clean data to the Swing client without exposing internal implementation objects.
 
 Main files:
 
@@ -92,7 +92,7 @@ Main files:
 
 ## 3. MVC In This Subsystem
 
-Yes, the subsystem follows MVC concepts, but in a modern split-backend/split-frontend style.
+Yes, the subsystem follows MVC concepts, but in a desktop-client/back-end style.
 
 ### Model
 
@@ -123,7 +123,7 @@ Main file:
 
 ### Controller
 
-The controller receives HTTP requests and returns dashboard data.
+The controller receives dashboard requests and returns dashboard data.
 
 Main file:
 
@@ -135,7 +135,7 @@ This is not a pure textbook single-process MVC app.
 
 It is better described as:
 
-- Spring Boot controller as the backend controller
+- Java controller layer as the request-handling controller
 - Java Swing as the desktop view
 - domain objects, DTOs, and analytics classes as the model side
 - service and repository layers between controller and model
@@ -184,7 +184,7 @@ Useful files:
 
 The controller pattern in GRASP assigns input handling to a dedicated class.
 
-Here, the web controller handles requests and delegates work to the dashboard service.
+Here, the controller handles requests and delegates work to the dashboard service.
 
 Useful file:
 
@@ -198,13 +198,13 @@ Examples:
 
 - services depend on repository interfaces
 - the controller depends on `DashboardService`
-- the UI depends on the REST API, not on the database directly
+- the Swing UI depends on the backend services, not on the database directly
 
 Useful files:
 
 - [`repository/interfaces/`](../repository/interfaces)
 - [`DashboardController.java`](../com/analytics/DashboardController.java)
-- [`Dashboard.jsx`](../ui/src/Dashboard.jsx)
+- [`SwingDashboardApp.java`](../desktop/SwingDashboardApp.java)
 
 ### High Cohesion
 
@@ -330,4 +330,4 @@ Limitation:
 
 If you need a short answer in class, you can say:
 
-"Our subsystem mainly uses the Facade pattern through `DashboardService`, and also uses Adapter in the repository layer to convert database JAR objects into local models. It follows MVC concepts in a split frontend-backend form, and the GRASP principles are visible through Information Expert, Low Coupling, High Cohesion, and Controller. The SOLID principles are mostly followed through separate controller, service, repository, mapper, and engine layers."
+"Our subsystem mainly uses the Facade pattern through `DashboardService`, and also uses Adapter in the repository layer to convert database JAR objects into local models. It follows MVC concepts in a Java Swing desktop-client style, and the GRASP principles are visible through Information Expert, Low Coupling, High Cohesion, and Controller. The SOLID principles are mostly followed through separate controller, service, repository, mapper, and engine layers."
