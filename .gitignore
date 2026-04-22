@@ -1,5 +1,50 @@
+# Build output
+target/
+build/
+dist/
+.dist/
+out/
 _build/
 _db_classes/
-db.jar
-database.properties
+_build_check/
+analyticsDashboard_branch/
+
+# Java / Maven
+*.class
+*.war
+*.ear
+*.log
+
+# React / Node
+node_modules/
+ui/node_modules/
+ui/build/
+ui/.env
+ui/.env.*
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# IDE and OS files
 .vscode/
+.idea/
+*.iml
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+.project
+.classpath
+.settings/
+
+# Local secrets
+.env
+.env.local
+*.key
+*.pem
+secrets.txt

@@ -19,9 +19,10 @@ public class DBFile {
             }
         } catch (NoClassDefFoundError e) {
             System.err.println("Missing runtime class from DB module: " + e.getMessage());
-            e.printStackTrace();
+        } catch (IllegalStateException e) {
+            System.err.println("DB module operation failed: " + e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Unexpected DB test failure: " + e.getClass().getSimpleName() + ": " + e.getMessage());
         }
     }
 
@@ -30,8 +31,7 @@ public class DBFile {
             int rows = supplier.get();
             System.out.println(methodName + " OK, rows=" + rows);
         } catch (Exception ex) {
-            System.err.println(methodName + " FAILED: " + ex.getMessage());
-            ex.printStackTrace();
+            System.err.println(methodName + " FAILED: " + ex.getClass().getSimpleName() + ": " + ex.getMessage());
         }
     }
 

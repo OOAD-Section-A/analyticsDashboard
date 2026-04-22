@@ -5,7 +5,11 @@ import com.pricingos.common.MarginProfitabilityResult;
 import com.pricingos.common.MarginProfitabilityResult.DateRange;
 import com.jackfruit.scm.database.config.DatabaseConnectionManager; // Existing manager
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 public class MarginProfitabilityServiceImpl implements IMarginProfitabilityService {
@@ -30,10 +34,13 @@ public class MarginProfitabilityServiceImpl implements IMarginProfitabilityServi
             stmt.setObject(2, Timestamp.valueOf(start));
             stmt.setObject(3, Timestamp.valueOf(end));
             
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) return rs.getDouble(1);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getDouble(1);
+                }
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("Failed to load margin profitability summary for status " + status, e);
         }
         return 0.0;
     }

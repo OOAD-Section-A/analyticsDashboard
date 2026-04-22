@@ -1,6 +1,7 @@
 package repository;
 
 import com.jackfruit.scm.database.facade.SupplyChainDatabaseFacade;
+import com.jackfruit.scm.database.facade.subsystem.DemandForecastingSubsystemFacade;
 import com.jackfruit.scm.database.model.DemandForecastingModels;
 import exception.AnalyticsExceptionSource;
 import model.SalesData;
@@ -21,12 +22,12 @@ public class SalesRepository implements SalesRepositoryInterface {
 
     public List<SalesData> fetchAll() {
         try (SupplyChainDatabaseFacade facade = new SupplyChainDatabaseFacade()) {
-            return facade.demandForecasting().listSalesRecords().stream()
+            DemandForecastingSubsystemFacade demandForecasting = facade.demandForecasting();
+            return demandForecasting.listSalesRecords().stream()
                     .map(this::mapSale)
                     .collect(Collectors.toList());
         } catch (Exception ex) {
-            exceptionSource.fireDataSourceUnavailable("SalesRepository.fetchAll", ex.getMessage());
-            throw new IllegalStateException("Failed to fetch sales data", ex);
+            throw RepositoryExceptionSupport.fail(exceptionSource, "SalesRepository.fetchAll", CONNECTION_FAILURE_ID, ex);
         }
     }
 

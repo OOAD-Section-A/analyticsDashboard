@@ -24,6 +24,13 @@ import model.SalesData;
 import model.ShipmentData;
 import model.SupplierData;
 import model.WarehouseData;
+import repository.ForecastRepository;
+import repository.InventoryRepository;
+import repository.OrderRepository;
+import repository.SalesRepository;
+import repository.ShipmentRepository;
+import repository.SupplierRepository;
+import repository.WarehouseRepository;
 import repository.interfaces.ForecastRepositoryInterface;
 import repository.interfaces.InventoryRepositoryInterface;
 import repository.interfaces.OrderRepositoryInterface;
@@ -40,7 +47,7 @@ import service.SupplierService;
 import service.WarehouseService;
 
 // --- NEW IMPORTS FOR REQUIREMENT 1 ---
-import common.com.pricingos.reporting.MarginProfitabilityServiceImpl;
+import com.pricingos.reporting.MarginProfitabilityServiceImpl;
 import com.pricingos.common.MarginProfitabilityResult;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -58,13 +65,13 @@ public class DashboardService implements DashboardProvider {
     }
 
     public DashboardDTO buildDashboard() {
-        InventoryRepositoryInterface inventoryRepository = new repository.InventoryRepository(exceptionSource);
-        SalesRepositoryInterface salesRepository = new repository.SalesRepository(exceptionSource);
-        OrderRepositoryInterface orderRepository = new repository.OrderRepository(exceptionSource);
-        ShipmentRepositoryInterface shipmentRepository = new repository.ShipmentRepository(exceptionSource);
-        WarehouseRepositoryInterface warehouseRepository = new repository.WarehouseRepository(exceptionSource);
-        SupplierRepositoryInterface supplierRepository = new repository.SupplierRepository(exceptionSource);
-        ForecastRepositoryInterface forecastRepository = new repository.ForecastRepository(exceptionSource);
+        InventoryRepositoryInterface inventoryRepository = new InventoryRepository(exceptionSource);
+        SalesRepositoryInterface salesRepository = new SalesRepository(exceptionSource);
+        OrderRepositoryInterface orderRepository = new OrderRepository(exceptionSource);
+        ShipmentRepositoryInterface shipmentRepository = new ShipmentRepository(exceptionSource);
+        WarehouseRepositoryInterface warehouseRepository = new WarehouseRepository(exceptionSource);
+        SupplierRepositoryInterface supplierRepository = new SupplierRepository(exceptionSource);
+        ForecastRepositoryInterface forecastRepository = new ForecastRepository(exceptionSource);
 
         List<InventoryData> inventory = new InventoryService(inventoryRepository, exceptionSource).getCleanedData();
         List<SalesData> sales = new SalesService(salesRepository, exceptionSource).getCleanedData();
@@ -74,20 +81,21 @@ public class DashboardService implements DashboardProvider {
         List<SupplierData> suppliers = new SupplierService(supplierRepository, exceptionSource).getCleanedData();
         List<ForecastData> forecasts = new ForecastService(forecastRepository, exceptionSource).getCleanedData();
 
-        // --- NEW: MARGIN PROFITABILITY INTEGRATION ---
+        // --- MARGIN PROFITABILITY INTEGRATION ---
         MarginProfitabilityServiceImpl marginService = new MarginProfitabilityServiceImpl();
         LocalDateTime endDate = LocalDateTime.now();
-        LocalDateTime startDate = endDate.minusDays(30); // Define a time window (e.g., last 30 days)
+        LocalDateTime startDate = endDate.minusDays(30);
         MarginProfitabilityResult marginResult = marginService.getMarginProfitabilitySummary(startDate, endDate);
-        // ---------------------------------------------
+        // ----------------------------------------
 
-        KPIResult kpis = new AnalyticsEngine()
-                .compute(inventory, sales, orders, shipments, warehouses, suppliers, forecasts);
+        // Compute KPIs using AnalyticsInput wrapper
+        KPIResultInternal kpisInternal = new AnalyticsEngine()
+                .compute(new AnalyticsInput(inventory, sales, orders, shipments, warehouses, suppliers, forecasts));
 
         List<String> insights = new InsightAggregator().generate(kpisInternal);
         List<String> alerts = new AlertGenerator().generate(new AlertInput(inventory, shipments));
         VisualizationDataInternal visualizationsInternal = new VisualizationEngine().buildCharts(new VisualizationInput(sales, inventory));
-        ReportDataInternal reportInternal = new ReportGenerator().generate(kpisInternal, insights, alerts);
+        ReportDataInternal reportInternal = new ReportGenerator().generate(kpisInternal, insights, alerts, marginResult);
 
         DashboardMapper mapper = new DashboardMapper();
         KPIResult kpis = mapper.toKPIResult(kpisInternal);

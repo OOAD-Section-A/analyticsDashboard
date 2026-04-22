@@ -74,7 +74,8 @@ public class AnalyticsExceptionSource {
     }
 
     public void fireConnectionFailed(int id, String target, String detail) {
-        fireDataSourceUnavailable(target, detail);
+        raise(id, "MAJOR",
+                "Connection failed for [" + safe(target) + "]: " + safe(detail));
     }
 
     public void fireInvalidInput(int id, String field, String value, String rule) {

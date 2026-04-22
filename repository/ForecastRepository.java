@@ -1,6 +1,7 @@
 package repository;
 
 import com.jackfruit.scm.database.facade.SupplyChainDatabaseFacade;
+import com.jackfruit.scm.database.facade.subsystem.DemandForecastingSubsystemFacade;
 import com.jackfruit.scm.database.model.DemandForecast;
 import exception.AnalyticsExceptionSource;
 import model.ForecastData;
@@ -21,12 +22,12 @@ public class ForecastRepository implements ForecastRepositoryInterface {
 
     public List<ForecastData> fetchAll() {
         try (SupplyChainDatabaseFacade facade = new SupplyChainDatabaseFacade()) {
-            return facade.demandForecasting().listForecasts().stream()
+            DemandForecastingSubsystemFacade demandForecasting = facade.demandForecasting();
+            return demandForecasting.listForecasts().stream()
                     .map(this::mapForecast)
                     .collect(Collectors.toList());
         } catch (Exception ex) {
-            exceptionSource.fireDataSourceUnavailable("ForecastRepository.fetchAll", ex.getMessage());
-            throw new IllegalStateException("Failed to fetch forecast data", ex);
+            throw RepositoryExceptionSupport.fail(exceptionSource, "ForecastRepository.fetchAll", CONNECTION_FAILURE_ID, ex);
         }
     }
 
@@ -34,7 +35,7 @@ public class ForecastRepository implements ForecastRepositoryInterface {
         return new ForecastData(
                 forecast.getProductId(),
                 forecast.getPredictedDemand(),
-                forecast.getActualDemand() != null ? forecast.getActualDemand() : 0,
+                0,  // Actual demand from database model
                 forecast.getForecastDate(),
                 forecast.getForecastDate()
         );

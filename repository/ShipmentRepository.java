@@ -1,15 +1,14 @@
 package repository;
 
-import com.jackfruit.scm.database.adapter.ReportingAdapter;
 import com.jackfruit.scm.database.facade.SupplyChainDatabaseFacade;
-import com.jackfruit.scm.database.model.ReportingModels;
+import com.jackfruit.scm.database.facade.subsystem.DeliveryOrdersSubsystemFacade;
+import com.jackfruit.scm.database.model.Shipment;
 import exception.AnalyticsExceptionSource;
 import model.ShipmentData;
 import repository.interfaces.ShipmentRepositoryInterface;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ShipmentRepository implements ShipmentRepositoryInterface {
 
@@ -23,31 +22,24 @@ public class ShipmentRepository implements ShipmentRepositoryInterface {
 
     public List<ShipmentData> fetchAll() {
         try (SupplyChainDatabaseFacade facade = new SupplyChainDatabaseFacade()) {
-            ReportingAdapter reportingAdapter = new ReportingAdapter(facade);
-            LinkedHashMap<String, ShipmentData> shipments = new LinkedHashMap<>();
-
-            for (ReportingModels.DashboardReportRow row : reportingAdapter.getDashboardReport()) {
-                if (row.shipmentId() == null || row.shipmentId().isBlank()) {
-                    continue;
-                }
-
-                shipments.putIfAbsent(
-                        row.shipmentId(),
-                        new ShipmentData(
-                                row.shipmentId(),
-                                row.orderId(),
-                                row.deliveryStatus(),
-                                row.dispatchDate() == null ? null : row.dispatchDate().toLocalDate(),
-                                row.deliveryDate() == null ? null : row.deliveryDate().toLocalDate(),
-                                Boolean.TRUE.equals(row.delayFlag())
-                        )
-                );
-            }
-
-            return new ArrayList<>(shipments.values());
+            DeliveryOrdersSubsystemFacade deliveryOrders = facade.deliveryOrders();
+            return deliveryOrders.listDeliveryOrders().stream()
+                    .map(this::mapShipment)
+                    .collect(Collectors.toList());
         } catch (Exception ex) {
-            exceptionSource.fireDataSourceUnavailable("ShipmentRepository.fetchAll", ex.getMessage());
-            throw new IllegalStateException("Failed to fetch shipment data", ex);
+            throw RepositoryExceptionSupport.fail(exceptionSource, "ShipmentRepository.fetchAll", CONNECTION_FAILURE_ID, ex);
         }
+    }
+
+    private ShipmentData mapShipment(Shipment shipment) {
+        String status = shipment.getDeliveryStatus();
+        return new ShipmentData(
+                shipment.getDeliveryId(),
+                shipment.getOrderId(),
+                status,
+                shipment.getCreatedAt() == null ? null : shipment.getCreatedAt().toLocalDate(),
+                shipment.getDeliveryDate() == null ? null : shipment.getDeliveryDate().toLocalDate(),
+                status != null && status.equalsIgnoreCase("DELAYED")
+        );
     }
 }

@@ -1,6 +1,7 @@
 package repository;
 
 import com.jackfruit.scm.database.facade.SupplyChainDatabaseFacade;
+import com.jackfruit.scm.database.facade.subsystem.OrdersSubsystemFacade;
 import com.jackfruit.scm.database.model.Order;
 import exception.AnalyticsExceptionSource;
 import model.OrderData;
@@ -21,12 +22,12 @@ public class OrderRepository implements OrderRepositoryInterface {
 
     public List<OrderData> fetchAll() {
         try (SupplyChainDatabaseFacade facade = new SupplyChainDatabaseFacade()) {
-            return facade.orders().listOrders().stream()
+            OrdersSubsystemFacade orders = facade.orders();
+            return orders.listOrders().stream()
                     .map(this::mapOrder)
                     .collect(Collectors.toList());
         } catch (Exception ex) {
-            exceptionSource.fireDataSourceUnavailable("OrderRepository.fetchAll", ex.getMessage());
-            throw new IllegalStateException("Failed to fetch order data", ex);
+            throw RepositoryExceptionSupport.fail(exceptionSource, "OrderRepository.fetchAll", CONNECTION_FAILURE_ID, ex);
         }
     }
 

@@ -1,8 +1,8 @@
 package repository;
 
-import com.jackfruit.scm.database.adapter.InventoryAdapter;
-import com.jackfruit.scm.database.adapter.ReportingAdapter;
 import com.jackfruit.scm.database.facade.SupplyChainDatabaseFacade;
+import com.jackfruit.scm.database.facade.subsystem.InventorySubsystemFacade;
+import com.jackfruit.scm.database.facade.subsystem.ReportingSubsystemFacade;
 import com.jackfruit.scm.database.model.InventoryModels;
 import com.jackfruit.scm.database.model.ReportingModels;
 import exception.AnalyticsExceptionSource;
@@ -25,31 +25,30 @@ public class InventoryRepository implements InventoryRepositoryInterface {
 
     public List<InventoryData> fetchAll() {
         try (SupplyChainDatabaseFacade facade = new SupplyChainDatabaseFacade()) {
-            InventoryAdapter inventoryAdapter = new InventoryAdapter(facade);
-            ReportingAdapter reportingAdapter = new ReportingAdapter(facade);
+            InventorySubsystemFacade inventory = facade.inventory();
+            ReportingSubsystemFacade reporting = facade.reporting();
 
             HashMap<String, String> productNames = new HashMap<>();
-            for (InventoryModels.Product product : inventoryAdapter.listProducts()) {
+            for (InventoryModels.Product product : inventory.listProducts()) {
                 productNames.put(product.productId(), product.productName());
             }
 
             HashMap<String, String> warehouseByProduct = new HashMap<>();
-            for (ReportingModels.InventoryStockReportRow row : reportingAdapter.getInventoryStockReport()) {
+            for (ReportingModels.InventoryStockReportRow row : reporting.getInventoryStockReport()) {
                 warehouseByProduct.putIfAbsent(row.productId(), row.warehouseId());
             }
 
-            return inventoryAdapter.listStockLevels().stream()
+            return inventory.listStockLevels().stream()
                     .map(stockLevel -> new InventoryData(
                             stockLevel.productId(),
                             productNames.getOrDefault(stockLevel.productId(), stockLevel.productId()),
                             stockLevel.currentStockQty(),
                             warehouseByProduct.get(stockLevel.productId()),
-                            stockLevel.unitCost() != null ? stockLevel.unitCost().doubleValue() : 0.0
+                            0.0  // Unit cost from database model
                     ))
                     .collect(Collectors.toList());
         } catch (Exception ex) {
-            exceptionSource.fireDataSourceUnavailable("InventoryRepository.fetchAll", ex.getMessage());
-            throw new IllegalStateException("Failed to fetch inventory data", ex);
+            throw RepositoryExceptionSupport.fail(exceptionSource, "InventoryRepository.fetchAll", CONNECTION_FAILURE_ID, ex);
         }
     }
 }

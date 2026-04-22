@@ -1,7 +1,8 @@
 package repository;
 
-import com.jackfruit.scm.database.adapter.ReportingAdapter;
 import com.jackfruit.scm.database.facade.SupplyChainDatabaseFacade;
+import com.jackfruit.scm.database.facade.subsystem.ReportingSubsystemFacade;
+import com.jackfruit.scm.database.facade.subsystem.WarehouseSubsystemFacade;
 import com.jackfruit.scm.database.model.ReportingModels;
 import com.jackfruit.scm.database.model.Warehouse;
 import exception.AnalyticsExceptionSource;
@@ -11,6 +12,8 @@ import repository.interfaces.WarehouseRepositoryInterface;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class WarehouseRepository implements WarehouseRepositoryInterface {
 
@@ -24,30 +27,38 @@ public class WarehouseRepository implements WarehouseRepositoryInterface {
 
     public List<WarehouseData> fetchAll() {
         try (SupplyChainDatabaseFacade facade = new SupplyChainDatabaseFacade()) {
-            ReportingAdapter reportingAdapter = new ReportingAdapter(facade);
-            LinkedHashMap<String, WarehouseData> warehouses = new LinkedHashMap<>();
+            WarehouseSubsystemFacade warehouseSubsystem = facade.warehouse();
+            ReportingSubsystemFacade reporting = facade.reporting();
 
-            for (ReportingModels.DashboardReportRow row : reportingAdapter.getDashboardReport()) {
+            Map<String, String> warehouseNames = warehouseSubsystem.listWarehouses().stream()
+                    .collect(Collectors.toMap(
+                            Warehouse::getWarehouseId,
+                            Warehouse::getWarehouseName,
+                            (left, right) -> left,
+                            LinkedHashMap::new
+                    ));
+
+            LinkedHashMap<String, WarehouseData> warehouses = new LinkedHashMap<>();
+            for (ReportingModels.DashboardReportRow row : reporting.getDashboardReport()) {
                 if (row.warehouseId() == null || row.warehouseId().isBlank()) {
                     continue;
                 }
 
                 int totalCapacity = row.storageCapacity() == null ? 0 : row.storageCapacity();
-                double utilizationRate = row.utilizationRate() == null ? 0.0 : row.utilizationRate();
-                String warehouseName = facade.getWarehouse(row.warehouseId())
-                        .map(Warehouse::getWarehouseName)
-                        .orElse(row.warehouseId());
+                int usedCapacity = row.utilizationRate() == null || row.storageCapacity() == null
+                        ? 0
+                        : (int) Math.round((row.storageCapacity() * row.utilizationRate()) / 100.0);
+                String warehouseName = warehouseNames.getOrDefault(row.warehouseId(), row.warehouseId());
 
                 warehouses.putIfAbsent(
                         row.warehouseId(),
-                        new WarehouseData(row.warehouseId(), warehouseName, totalCapacity, 0) // usedCapacity set to 0, computed in service
+                        new WarehouseData(row.warehouseId(), warehouseName, totalCapacity, usedCapacity)
                 );
             }
 
             return new ArrayList<>(warehouses.values());
         } catch (Exception ex) {
-            exceptionSource.fireDataSourceUnavailable("WarehouseRepository.fetchAll", ex.getMessage());
-            throw new IllegalStateException("Failed to fetch warehouse data", ex);
+            throw RepositoryExceptionSupport.fail(exceptionSource, "WarehouseRepository.fetchAll", CONNECTION_FAILURE_ID, ex);
         }
     }
 }
