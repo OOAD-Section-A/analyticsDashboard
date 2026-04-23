@@ -193,18 +193,24 @@ public class SwingDashboardApp {
         ));
         panel.setBackground(Color.WHITE);
         panel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
 
+    // ===== Heading =====
         JLabel heading = new JLabel("Filter");
         heading.setFont(new Font("SansSerif", Font.BOLD, 21));
         heading.setAlignmentX(Component.LEFT_ALIGNMENT);
+        heading.setMaximumSize(new Dimension(Integer.MAX_VALUE, heading.getPreferredSize().height));
 
+    // ===== Helper text =====
         JLabel helper = new JLabel("Choose which sections to view and which dataset to inspect.");
         helper.setForeground(new Color(75, 85, 99));
         helper.setAlignmentX(Component.LEFT_ALIGNMENT);
+        helper.setMaximumSize(new Dimension(Integer.MAX_VALUE, helper.getPreferredSize().height));
 
+    // ===== Toggles =====
         JPanel toggles = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 4));
         toggles.setOpaque(false);
+        toggles.setAlignmentX(Component.LEFT_ALIGNMENT);
+
         addToggle(toggles, "kpis", "KPI cards", true);
         addToggle(toggles, "analytics", "Analytics", true);
         addToggle(toggles, "insights", "Insights", true);
@@ -213,34 +219,29 @@ public class SwingDashboardApp {
         addToggle(toggles, "report", "Report", true);
         addToggle(toggles, "margin", "Profitability", true);
 
-        sectionToggles.forEach((key, checkbox) -> checkbox.addActionListener(e -> applySectionVisibility()));
+        sectionToggles.forEach((key, checkbox) ->
+                checkbox.addActionListener(e -> applySectionVisibility())
+        );
+
+    // ===== Bottom note =====
+        JLabel note = new JLabel("Use the explorer to switch datasets and columns.");
+        note.setForeground(new Color(75, 85, 99));
+        note.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JPanel tableNote = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
         tableNote.setOpaque(false);
-        JLabel note = new JLabel("Use the explorer to switch datasets and columns.");
-        note.setForeground(new Color(75, 85, 99));
+        tableNote.setAlignmentX(Component.LEFT_ALIGNMENT);
         tableNote.add(note);
 
-        JPanel textBlock = new JPanel(new BorderLayout());
-        textBlock.setOpaque(false);
-        textBlock.setAlignmentX(Component.LEFT_ALIGNMENT);
-        textBlock.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60));
-
-        JPanel leftText = new JPanel();
-        leftText.setOpaque(false);
-        leftText.setLayout(new BoxLayout(leftText, BoxLayout.Y_AXIS));
-        leftText.setAlignmentX(Component.LEFT_ALIGNMENT);
-        leftText.add(heading);
-        leftText.add(Box.createVerticalStrut(4));
-        leftText.add(helper);
-
-        textBlock.add(leftText, BorderLayout.WEST);
-
-        panel.add(textBlock);
-        panel.add(Box.createVerticalStrut(8));
+    // ===== Add everything directly (NO BorderLayout wrapper) =====
+        panel.add(heading);
+        panel.add(Box.createVerticalStrut(4));
+        panel.add(helper);
+        panel.add(Box.createVerticalStrut(10));
         panel.add(toggles);
         panel.add(Box.createVerticalStrut(6));
         panel.add(tableNote);
+
         return panel;
     }
 

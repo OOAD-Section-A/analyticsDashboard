@@ -119,6 +119,7 @@ These interfaces let the service layer depend on abstractions instead of concret
 
 ## Documentation Folder
 
+- [`docs/ANEESH_PART_NOTES.md`](ANEESH_PART_NOTES.md) - Detailed explanation of the data cleaning, KPI engine, exception source, and self-test files.
 - [`docs/ARCHITECTURE_NOTES.md`](ARCHITECTURE_NOTES.md) - Design patterns, SOLID, and MVC notes.
 - [`docs/INTEGRATION.md`](INTEGRATION.md) - Database module integration guide.
 - [`docs/INTEGRATION_COMPLETE.md`](INTEGRATION_COMPLETE.md) - Integration summary.
